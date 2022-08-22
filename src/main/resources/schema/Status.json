@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "message.types.Status",
+  "javaType": "core.kafka.communication.types.Status",
   "properties": {
     "diskSize": {
       "type": "long"

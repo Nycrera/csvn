@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "message.types.Action",
+  "javaType": "core.kafka.communication.types.Action",
   "properties": {
     "sender_id": {
       "type": "string"
