@@ -29,16 +29,15 @@ public class ScreenStreamerAlt {
 	 * @param ipaddress   String containing the IP address of the receiving client.
 	 * @param port        String containing the Port number of the receiving client.
 	 * @param enableVAAPI Defines whether the video acceleration is used or not.
+	 * @param inputStr    Defines the -i option for example use ":0.0".
 	 * @throws Exception
 	 * @throws java.lang.Exception
 	 * @throws IllegalArgumentException
 	 * @throws GstException
 	 */
-	ScreenStreamerAlt(String ipaddress, String port, boolean enableVAAPI, BufferedReader br) throws java.lang.Exception {
-		System.out.println("-i code:");
-		String inputstr = br.readLine();
+	ScreenStreamerAlt(String ipaddress, String port, boolean enableVAAPI, String inputStr) throws java.lang.Exception {
 		
-		videoGrabber = new FFmpegFrameGrabber(inputstr);
+		videoGrabber = new FFmpegFrameGrabber(inputStr);
 		videoGrabber.setFormat("x11grab");
 		
 		videoGrabber.setFrameRate(FPS);
