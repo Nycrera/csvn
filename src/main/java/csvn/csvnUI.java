@@ -513,6 +513,7 @@ public class csvnUI extends JFrame {
                 try {
                     // TODO add your handling code here:
                     StatusProducer.publishMessage();
+                    System.out.println("okk");
                 } catch (InterruptedException ex) {
                     Logger.getLogger(csvnUI.class.getName()).log(Level.SEVERE, null, ex);
                 }

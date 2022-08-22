@@ -15,7 +15,7 @@ import java.io.Serializable;
     "consoleRecordStatus",
     "displayRecordStatus"
 })
-public class Status implements Serializable {
+public class Status implements Serializable{
 
     @JsonProperty("diskSize")
     private Object diskSize;
