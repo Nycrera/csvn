@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "javaType": "message.types.Status",
+  "properties": {
+    "diskSize": {
+      "type": "long"
+    },
+    "freeDiskPartition": {
+      "type": "long"
+    },
+    "usableDiskPartition": {
+      "type": "long"
+    },
+    "systemLiveStatus": {
+      "type": "boolean[]"
+    },
+    "consoleRecordStatus": {
+      "type": "boolean[]"
+    },
+    "displayRecordStatus": {
+      "type": "boolean[]"
+    }
+  }
+}

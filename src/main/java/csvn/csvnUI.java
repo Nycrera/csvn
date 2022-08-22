@@ -42,7 +42,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JToggleButton;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import csvn.colors;
+import core.themes.Colors;
 
 public class csvnUI extends JFrame {
 
@@ -94,7 +94,7 @@ public class csvnUI extends JFrame {
 	 * Create the frame.
 	 */
 	public csvnUI() {
-		colors colors= new colors();
+		Colors colors= new Colors();
 
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -452,16 +452,17 @@ public class csvnUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if(maintglbtn.isSelected()==true) {
 				maintglbtn.setIcon(new ImageIcon(imgsun));
-				dpanel = colors.lightpanel;
-				dspanel = colors.lightsubpanel;
-				dcomponent = colors.lightcomponents;
+                                
+				dpanel = Colors.lightpanel;
+				dspanel = Colors.lightsubpanel;
+				dcomponent = Colors.lightcomponents;
 				
 			}
 			else {
 				maintglbtn.setIcon(new ImageIcon(imgmoon));
-				dpanel = colors.darkpanel;
-				dspanel = colors.darksubpanel;
-				dcomponent = colors.darkcomponents;
+				dpanel = Colors.darkpanel;
+				dspanel = Colors.darksubpanel;
+				dcomponent = Colors.darkcomponents;
 				
 			}
 			mainpanel.setBackground(dpanel);
