@@ -86,6 +86,24 @@
           <artifactId>jersey-hk2</artifactId>
           <version>${jersey.version}</version>
       </dependency> 
+      		<!-- https://mvnrepository.com/artifact/org.freedesktop.gstreamer/gst1-java-core -->
+		<dependency>
+			<groupId>org.freedesktop.gstreamer</groupId>
+			<artifactId>gst1-java-core</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/javacv -->
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv</artifactId>
+			<version>1.5.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv-platform</artifactId>
+			<version>1.5.7</version>
+		</dependency>
       </dependencies>
   <build>
   <plugins>
