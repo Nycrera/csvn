@@ -1,1 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<modules>  
+    <module id="1">  
+        <id>OPCON-1</id>  
+        <ipAdress>201.0.1.11</ipAdress>  
+        <encoder>192.168.1.101</encoder>  
+        <decoder>192.168.1.101</decoder>  
+        <type>CONSOLE</type> 
+        <streamip>192.168.1.151</streamip>  
+        <streamport>8551</streamport>   
+    </module>  
+      
+    <module id="2">  
+        <id>OPCON-2</id>  
+        <ipAdress>201.0.1.12</ipAdress>  
+        <encoder>192.168.1.102</encoder>  
+        <decoder>192.168.1.102</decoder>  
+        <type>CONSOLE</type> 
+        <streamip>192.168.1.152</streamip>  
+        <streamport>8552</streamport>   
+    </module>  
+  
+    <module id="3">  
+        <id>OPCON-3</id>  
+        <ipAdress>201.0.1.13</ipAdress>  
+        <encoder>192.168.1.102</encoder>  
+        <decoder>192.168.1.102</decoder>  
+        <type>CONSOLE</type> 
+        <streamip>192.168.1.153</streamip>  
+        <streamport>8553</streamport>    
+    </module>  
+  
+    <module id="4">  
+        <id>OPCON-4</id>  
+        <ipAdress>201.0.1.14</ipAdress>  
+        <encoder>192.168.1.102</encoder>  
+        <decoder>192.168.1.102</decoder>  
+        <type>CONSOLE</type> 
+        <streamip>192.168.1.154</streamip>  
+        <streamport>8554</streamport>     
+    </module>  
+  
+</modules>  
