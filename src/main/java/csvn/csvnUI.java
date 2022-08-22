@@ -1,4 +1,4 @@
-package staj1;
+package csvn;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,8 +42,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JToggleButton;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import csvn.colors;
 
-public class staj1whole extends JFrame {
+public class csvnUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField rcrdtxt;
@@ -80,7 +81,7 @@ public class staj1whole extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					staj1whole frame = new staj1whole();
+					csvnUI frame = new csvnUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -92,7 +93,7 @@ public class staj1whole extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public staj1whole() {
+	public csvnUI() {
 		colors colors= new colors();
 
 		
