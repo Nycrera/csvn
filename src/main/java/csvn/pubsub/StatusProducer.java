@@ -40,16 +40,17 @@ public class StatusProducer {
 
     }*/
     public static void publishMessage() throws InterruptedException{
-        KafkaProducer<String, Status> kafkaProducer = new KafkaProducer<String, Status>(getKafkaProducerConfig());
-        Status status = getStatus();
-
-        ProducerRecord<String, Status> statusRecord = new ProducerRecord<>(IAppConfigs.STATUS_TOPIC,
-                "status", status);
-        kafkaProducer.send(statusRecord);
-
-        logger.info("Event published...");
-        kafkaProducer.flush();
-        kafkaProducer.close();
+        try (KafkaProducer<String, Status> kafkaProducer = new KafkaProducer<String, Status>(getKafkaProducerConfig())) {
+            Status status = getStatus();
+            
+            ProducerRecord<String, Status> statusRecord = new ProducerRecord<>(IAppConfigs.STATUS_TOPIC,
+                    "status", status);
+            kafkaProducer.send(statusRecord);
+            
+            logger.info("Event published...");
+            kafkaProducer.flush();
+        }
+        
         logger.info("Producer closed...");
         Thread.sleep(2);
     }
