@@ -8,12 +8,17 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -178,6 +183,68 @@ public class Util {
 			e.printStackTrace();
 		}
 		throw new Exception("Can not find the opcon name");
+	}
+	
+	public static String GetIPofOpcon(String opconName) throws Exception {
+		try {
+        File xmlfile = new File("XMLFile.xml");
+        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dbbuild = dbfac.newDocumentBuilder();
+        Document xmldoc = dbbuild.parse(xmlfile);
+        xmldoc.getDocumentElement().normalize();
+        NodeList nodeList = xmldoc.getElementsByTagName("module");
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) node;
+                String nodeip = eElement.getElementsByTagName("ipAdress").item(0).getTextContent();
+                String nodename = eElement.getElementsByTagName("id").item(0).getTextContent();
+                if(nodename.toLowerCase().equals(opconName.toLowerCase())) {
+                	return nodeip;
+                }
+            }
+        }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		throw new Exception("Can not find the ip of given opcon name");
+	}
+	
+	
+	public static Map<String, Object> toMap(JSONObject object) throws JSONException {
+	    Map<String, Object> map = new HashMap<String, Object>();
+
+	    Iterator<String> keysItr = object.keys();
+	    while(keysItr.hasNext()) {
+	        String key = keysItr.next();
+	        Object value = object.get(key);
+	        
+	        if(value instanceof JSONArray) {
+	            value = toList((JSONArray) value);
+	        }
+	        
+	        else if(value instanceof JSONObject) {
+	            value = toMap((JSONObject) value);
+	        }
+	        map.put(key, value);
+	    }
+	    return map;
+	}
+	
+	public static List<Object> toList(JSONArray array) throws JSONException {
+	    List<Object> list = new ArrayList<Object>();
+	    for(int i = 0; i < array.length(); i++) {
+	        Object value = array.get(i);
+	        if(value instanceof JSONArray) {
+	            value = toList((JSONArray) value);
+	        }
+
+	        else if(value instanceof JSONObject) {
+	            value = toMap((JSONObject) value);
+	        }
+	        list.add(value);
+	    }
+	    return list;
 	}
 
 }
