@@ -29,7 +29,7 @@ public class ServerManager {
                 } catch (InterruptedException e) {
                 }
             }
-        }, 0, 1000, TimeUnit.MILLISECONDS);
+        }, 0, 1500, TimeUnit.MILLISECONDS);
     }
 
 

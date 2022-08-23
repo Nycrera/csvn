@@ -54,12 +54,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
+
 public class csvnUI extends JFrame {
 
     private JPanel contentPane;
     private JTextField rcrdtxt;
     private JTextField rplytxt;
-
+    private static Status statusModel;
     private JButton mainbtn9;
     static JButton[] statusencoderbutton;
     static JButton[] statusbutton;
@@ -68,15 +69,12 @@ public class csvnUI extends JFrame {
     Color dspanel = new Color(140, 140, 140);
     Color dcomponent = new Color(130, 130, 130);
 
-    public void guncelle(Status status, JButton btnvoid,JButton[] statusButtons) {
+    public void guncelle(Status status, JButton btnvoid) {
         try {
+            statusModel = status;
             long totalsize = Long.valueOf(status.getDiskSize().toString());
             long usabledisk = Long.valueOf(status.getUsableDiskPartition().toString());
-            List<Boolean> liste = status.getSystemLiveStatus();
-            for(int i = 0;i<liste.size();i++){
-               
-                statusButtons[i].setBackground(liste.get(i) ? Color.GREEN : Color.RED);
-            }
+            
             if (nonNull(totalsize) && nonNull(usabledisk)) {
                 long a = (100 * (totalsize - usabledisk) / totalsize);
                 if (a > 80) {
@@ -89,6 +87,7 @@ public class csvnUI extends JFrame {
                 }
                 btnvoid.setText("Storage %" + a);
                 btnvoid.repaint();
+
                 System.out.println(a);
             } else {
 
@@ -716,6 +715,18 @@ public class csvnUI extends JFrame {
                     dstcombo2.getSelectedItem().toString()});
             }
         });
+        ScheduledThreadPoolExecutor statusThread = new ScheduledThreadPoolExecutor(1);
+        statusThread.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    guncelle(App.vericek(), mainbtn9);
+                } catch (java.lang.Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }, 0, 1500, TimeUnit.MILLISECONDS);
 
         dstbtn2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -749,6 +760,12 @@ public class csvnUI extends JFrame {
                             statuspanel.add(statusbutton[i]);
                             statuspanel.repaint();
                         }
+                        List<Boolean> liste = statusModel.getSystemLiveStatus();
+                        for (int i = 0; i < liste.size(); i++) {
+
+                            statusencoderbutton[i].setBackground(liste.get(i) ? Color.GREEN : Color.RED);
+                            statusencoderbutton[i].repaint();
+                        }
                     } catch (Exception f) {
                     }
                 }
@@ -756,32 +773,18 @@ public class csvnUI extends JFrame {
         });
         rcrdtable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                String rcrdstring =  null;
+                String rcrdstring = null;
                 rcrdstring = rcrdtable.getValueAt(rcrdtable.getSelectedRow(), 1).toString();
-                if(rcrdstring.equals("Available")) {
+                if (rcrdstring.equals("Available")) {
                     rcrdbtn1.setEnabled(true);
                     rcrdbtn2.setEnabled(false);
-                }else {
+                } else {
                     rcrdbtn1.setEnabled(false);
                     rcrdbtn2.setEnabled(true);
                 }
 
             }
         });
-        
-        ScheduledThreadPoolExecutor statusThread = new ScheduledThreadPoolExecutor(1);
-        statusThread.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    guncelle(App.vericek(), mainbtn9,statusencoderbutton);
-                } catch (java.lang.Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            
-        }, 0, 1000, TimeUnit.MILLISECONDS);
 
     }
 
