@@ -1,6 +1,8 @@
 
 package core.kafka.communication.types;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -16,7 +18,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "consoleRecordStatus",
     "displayRecordStatus"
 })
-public class Status implements Serializable{
+public class Status implements Serializable {
 
     @JsonProperty("diskSize")
     private Object diskSize;
@@ -25,7 +27,7 @@ public class Status implements Serializable{
     @JsonProperty("usableDiskPartition")
     private Object usableDiskPartition;
     @JsonProperty("systemLiveStatus")
-    private Object systemLiveStatus;
+    private List<Boolean> systemLiveStatus = new ArrayList<Boolean>();
     @JsonProperty("consoleRecordStatus")
     private Object consoleRecordStatus;
     @JsonProperty("displayRecordStatus")
@@ -62,12 +64,12 @@ public class Status implements Serializable{
     }
 
     @JsonProperty("systemLiveStatus")
-    public Object getSystemLiveStatus() {
+    public List<Boolean> getSystemLiveStatus() {
         return systemLiveStatus;
     }
 
     @JsonProperty("systemLiveStatus")
-    public void setSystemLiveStatus(Object systemLiveStatus) {
+    public void setSystemLiveStatus(List<Boolean> systemLiveStatus) {
         this.systemLiveStatus = systemLiveStatus;
     }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
-<ipaddress>127.0.0.12</ipaddress>
+<ipaddress>127.0.0.1</ipaddress>
 <amiserver>false</amiserver> <!-- Force identification of server-->
 </server>

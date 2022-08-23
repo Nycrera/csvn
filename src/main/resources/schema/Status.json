@@ -11,14 +11,28 @@
     "usableDiskPartition": {
       "type": "long"
     },
-    "systemLiveStatus": {
-      "type": "boolean[]"
+    "opconLiveStatus": {
+      "type": "array",
+       "items": {
+        "type": "boolean"
+      }
+    },"coderLiveStatus": {
+      "type": "array",
+       "items": {
+        "type": "boolean"
+      }
     },
     "consoleRecordStatus": {
-      "type": "boolean[]"
+      "type": "array",
+       "items": {
+        "type": "boolean"
+      }
     },
     "displayRecordStatus": {
-      "type": "boolean[]"
+      "type": "array",
+       "items": {
+        "type": "boolean"
+      }
     }
   }
 }

@@ -4,9 +4,11 @@
  */
 package csvn;
 
+import core.connection.PingUtil;
 import core.kafka.communication.types.Status;
 import csvn.pubsub.StatusProducer;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +41,7 @@ public class ServerManager {
         long usablePatitionSpace = diskPartition.getUsableSpace();
 
         //ping management
-        Boolean[] systemLiveStatus = new Boolean[]{true, true, true};
+        ArrayList<Boolean> systemLiveStatus = PingUtil.opconPingController();
         Boolean[] consoleRecordStatus = new Boolean[]{true, false, true}; // konsol durum
         Boolean[] displayRecordStatus = new Boolean[]{true, true, true};
         status.setDiskSize(totalCapacity);
