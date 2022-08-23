@@ -40,7 +40,7 @@ public class ActionConsumer {
                 actionRecords.forEach(record -> {
                     //System.out.println(record.value().toString());
                     // Something happened
-                    KafkaListener.KafkaAction(record.value().toString());
+                    KafkaListener.KafkaAction(record.value());
                 });
             } catch (NullPointerException npe) {
                 npe.printStackTrace();
