@@ -9,6 +9,17 @@ import java.util.regex.Pattern;
 
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 
+import java.io.File;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 // Utility class
 public class Util {
 
@@ -87,6 +98,42 @@ public class Util {
 		}
 		grabber.stop();
 		grabber.close();
+	}
+	
+	
+	public static boolean DetectIfServer() {
+		/* Detect if OPCON or server */
+		try {
+		  File xmlfile = new File("Serverconfig.xml");
+          DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+          DocumentBuilder dbbuild = dbfac.newDocumentBuilder();
+          Document xmldoc = dbbuild.parse(xmlfile);
+          xmldoc.getDocumentElement().normalize();
+          Element serverEl = (Element) xmldoc.getElementsByTagName("server").item(0);
+          String amiserver = serverEl.getElementsByTagName("amiserver").item(0).getTextContent();
+          if(amiserver.toLowerCase().equals("true")) { // Forced server detection.
+        	return true;
+          }else { // Check if one of my ip adresses is equal to serverip address.
+              Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+              while (interfaces.hasMoreElements()) {
+                  NetworkInterface iface = interfaces.nextElement();
+                  // filters out inactive interfaces
+                  if (!iface.isUp())
+                      continue;
+
+                  Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                  while(addresses.hasMoreElements()) {
+                      InetAddress addr = addresses.nextElement();
+                      if(addr.getHostAddress().equals(serverEl.getElementsByTagName("ipaddress").item(0).getTextContent())) {
+                    	  return true;
+                      }
+                  }
+              }
+          }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false; // If all checks fell, I am not the server.
 	}
 
 }
