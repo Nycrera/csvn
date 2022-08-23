@@ -1,5 +1,6 @@
 package csvn;
 
+import core.kafka.communication.types.Status;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -44,6 +45,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import core.themes.Colors;
 import csvn.pubsub.StatusProducer;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,9 +55,26 @@ public class csvnUI extends JFrame {
     private JTextField rcrdtxt;
     private JTextField rplytxt;
 
+    private JButton mainbtn9;
+    static JButton[] statusencoderbutton;
+    static JButton[] statusbutton;
+    private JLabel mainlbl1;
     Color dpanel = new Color(170, 170, 170);
     Color dspanel = new Color(140, 140, 140);
     Color dcomponent = new Color(130, 130, 130);
+    
+    public void guncelle(Status status, JButton btnvoid) {
+        long totalsize = Long.valueOf(status.getDiskSize().toString());
+        long usabledisk = Long.valueOf(status.getUsableDiskPartition().toString());
+        long a = (100 * (totalsize - usabledisk) / totalsize);
+
+        btnvoid.setText("Storage %" + a);
+        btnvoid.repaint();
+        System.out.println(a);
+
+    }
+    
+    
 
     DefaultTableModel modeldst = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
@@ -83,8 +102,8 @@ public class csvnUI extends JFrame {
     /**
      * Launch the application.
      */
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
+    public static void main(String[] args) throws InterruptedException, InvocationTargetException {
+        EventQueue.invokeAndWait(new Runnable() {
             public void run() {
                 try {
                     csvnUI frame = new csvnUI();
@@ -145,7 +164,8 @@ public class csvnUI extends JFrame {
         mainbtn5.setBounds(327, 3, 181, 32);
         uppanel.add(mainbtn5);
 
-        JButton mainbtn9 = new JButton("STORAGE %0");
+        mainbtn9 = new JButton("123");
+        mainbtn9.setText("Storage %0");
         mainbtn9.setBackground(Color.GREEN);
         mainbtn9.setFont(new Font("Times New Roman", Font.PLAIN, 13));
         mainbtn9.setBounds(537, 3, 181, 32);
@@ -382,12 +402,11 @@ public class csvnUI extends JFrame {
         dstlbl3.setForeground(Color.WHITE);
         dstlbl3.setBounds(206, 9, 180, 39);
         dstpanel.add(dstlbl3);
-
         JPanel sttngpanel = new JPanel();
         sttngpanel.setBounds(0, 37, 862, 398);
         contentPane.add(sttngpanel);
         sttngpanel.setLayout(null);
-
+        guncelle(App.vericek(),mainbtn9);
         JPanel statuspanel = new JPanel();
         statuspanel.setBounds(0, 37, 862, 398);
         contentPane.add(statuspanel);
@@ -681,5 +700,45 @@ public class csvnUI extends JFrame {
                 modeldst.removeRow(dsttable.getSelectedRow());
             }
         });
+        mainbtn5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                {
+                    try {
+                        File xmlfile1 = new File("XMLFile.xml");
+                        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+                        DocumentBuilder dbbuild = dbfac.newDocumentBuilder();
+                        Document xmldoc = dbbuild.parse(xmlfile1);
+                        xmldoc.getDocumentElement().normalize();
+                        NodeList nodeList = xmldoc.getElementsByTagName("module");
+                        statusencoderbutton = new JButton[nodeList.getLength()];
+                        statusbutton = new JButton[nodeList.getLength()];
+
+                        for (int i = 0; i < nodeList.getLength(); i++) {
+                            Node node = nodeList.item(i);
+                            Element eElement = (Element) node;
+                            statusencoderbutton[i] = new JButton(eElement.getElementsByTagName("id").item(0).getTextContent());
+                            statusencoderbutton[i].setBounds(40, 40 + i * 60, 100, 50);
+                            statusencoderbutton[i].setBackground(dcomponent);
+                            statuspanel.add(statusencoderbutton[i]);
+                            statusbutton[i] = new JButton();
+                            statusbutton[i].setBounds(150, 40 + i * 60, 100, 50);
+                            statusbutton[i].setBackground(dcomponent);
+                            statuspanel.add(statusbutton[i]);
+                            statuspanel.repaint();
+                        }
+                    } catch (Exception f) {
+                    }
+                }
+            }
+        });
+
     }
+
+    /**
+     *
+     * @param status
+     * @param mainbtn9
+     */
+    
 }
