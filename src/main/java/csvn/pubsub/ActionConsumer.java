@@ -20,6 +20,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import core.kafka.serialization.ObjectDeserializer;
+import csvn.KafkaActionListener;
 
 public class ActionConsumer {
     static Logger logger = LogManager.getLogger(ActionProducer.class.getName());
@@ -27,7 +28,12 @@ public class ActionConsumer {
         logger.info("Status consumer starting...");
         startConsumer();
     }
-
+    
+    private static KafkaActionListener KafkaListener;
+    public void registerActionListener(KafkaActionListener listener) {
+    	KafkaListener = listener;
+    }
+    
     public static void startConsumer() {
         KafkaConsumer<String, Action> kafkaConsumer = getKafkaConsumer();
         kafkaConsumer.subscribe(Collections.singletonList(IAppConfigs.ACTION_TOPIC));
@@ -37,6 +43,8 @@ public class ActionConsumer {
                 ConsumerRecords<String, Action> actionRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 actionRecords.forEach(record -> {
                     System.out.println(record.value().toString());
+                    // Something happened
+                    KafkaListener.KafkaAction(record.value().toString());
                 });
             } catch (NullPointerException npe) {
                 npe.printStackTrace();
