@@ -11,7 +11,7 @@ package core.kafka.connection;
 public interface IAppConfigs {
     String BOOTSTAP_SERVER="localhost:9092";
     String APPLICATION_ID_CONFIG="order-id-config";
-    String STATUS_TOPIC="status";
+    String STATUS_TOPIC="statuss";
     String ACTION_TOPIC="action";
     String SENDER_ID="client_1";
 }

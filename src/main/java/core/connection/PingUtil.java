@@ -35,7 +35,7 @@ public class PingUtil {
                     Element eElement = (Element) node;
                     InetAddress address = InetAddress.getByName(eElement.getElementsByTagName("ipAdress").item(0).getTextContent());
 
-                    opconsPing.add(address.isReachable(10000));
+                    opconsPing.add(address.isReachable(250));
 
                 }
             }
