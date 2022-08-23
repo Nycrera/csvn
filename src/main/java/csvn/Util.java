@@ -12,13 +12,16 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 // Utility class
 public class Util {
@@ -134,6 +137,47 @@ public class Util {
 			e.printStackTrace();
 		}
 		return false; // If all checks fell, I am not the server.
+	}
+	
+	public static String DetectOpconUsingIP() throws Exception {
+		try{
+			// Get my ip addresses
+			List<String> ipaddresses = new ArrayList<String>();
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                // filters out inactive interfaces
+                if (!iface.isUp())
+                    continue;
+
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while(addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    ipaddresses.add(addr.getHostAddress());
+                }
+            }
+			
+        File xmlfile = new File("XMLFile.xml");
+        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dbbuild = dbfac.newDocumentBuilder();
+        Document xmldoc = dbbuild.parse(xmlfile);
+        xmldoc.getDocumentElement().normalize();
+        NodeList nodeList = xmldoc.getElementsByTagName("module");
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) node;
+                String nodeip = eElement.getElementsByTagName("ipAdress").item(0).getTextContent();
+                String nodename = eElement.getElementsByTagName("id").item(0).getTextContent();
+                if(ipaddresses.contains(nodeip)) {
+                	return nodename;
+                }
+            }
+        }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		throw new Exception("Can not find the opcon name");
 	}
 
 }
