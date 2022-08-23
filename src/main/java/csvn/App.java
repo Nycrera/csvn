@@ -14,8 +14,12 @@ public class App {
 
     
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
+        //SERVER CHECK
+        if(Util.DetectIfServer()){
+            System.out.println("ok server");
+            ServerManager.main(args);
+        }
         
-        ServerManager.main(args);
         FFmpegLogCallback.setLevel(avutil.AV_LOG_INFO);
         FFmpegLogCallback.set(); // Sets FFMpeg to direct its logs.
 

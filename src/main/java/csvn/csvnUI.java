@@ -46,6 +46,7 @@ import javax.swing.table.TableRowSorter;
 import core.themes.Colors;
 import csvn.pubsub.StatusProducer;
 import java.lang.reflect.InvocationTargetException;
+import static java.util.Objects.nonNull;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -66,21 +67,33 @@ public class csvnUI extends JFrame {
     Color dcomponent = new Color(130, 130, 130);
 
     public void guncelle(Status status, JButton btnvoid) {
-        long totalsize = Long.valueOf(status.getDiskSize().toString());
-        long usabledisk = Long.valueOf(status.getUsableDiskPartition().toString());
-        long a = (100 * (totalsize - usabledisk) / totalsize);
-        if(a>80){
-           
+        try {
+            long totalsize = Long.valueOf(status.getDiskSize().toString());
+            long usabledisk = Long.valueOf(status.getUsableDiskPartition().toString());
+            if (nonNull(totalsize) && nonNull(usabledisk)) {
+                long a = (100 * (totalsize - usabledisk) / totalsize);
+                if (a > 80) {
+
+                    mainbtn9.setBackground(Color.RED);
+                } else if (a > 50) {
+                    mainbtn9.setBackground(Color.YELLOW);
+                } else {
+                    mainbtn9.setBackground(Color.GREEN);
+                }
+                btnvoid.setText("Storage %" + a);
+                btnvoid.repaint();
+                System.out.println(a);
+            } else {
+
+                mainbtn9.setBackground(Color.RED);
+                btnvoid.setText("CANNOT GET DISK INFO");
+                btnvoid.repaint();
+            }
+        } catch (Exception e) {
             mainbtn9.setBackground(Color.RED);
-        }else if(a > 50){
-            mainbtn9.setBackground(Color.YELLOW);
+            btnvoid.setText("ERROR DISK INFO");
+            btnvoid.repaint();
         }
-        else{
-            mainbtn9.setBackground(Color.GREEN);
-        }
-        btnvoid.setText("Storage %" + a);
-        btnvoid.repaint();
-        System.out.println(a);
 
     }
 
@@ -537,7 +550,7 @@ public class csvnUI extends JFrame {
                 rcrdpanel.setVisible(true);
                 rplypanel.setVisible(false);
                 dstpanel.setVisible(false);
-                
+
                 sttngpanel.setVisible(false);
                 statuspanel.setVisible(false);
 
@@ -739,7 +752,7 @@ public class csvnUI extends JFrame {
             @Override
             public void run() {
                 try {
-                   guncelle(App.vericek(),mainbtn9);
+                    guncelle(App.vericek(), mainbtn9);
                 } catch (java.lang.Exception e) {
                     e.printStackTrace();
                 }
