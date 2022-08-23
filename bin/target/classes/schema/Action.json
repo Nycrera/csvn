@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "javaType": "core.kafka.communication.types.Action",
+  "properties": {
+    "sender_id": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "action_name": {
+      "type": "string"
+    },
+    "action_properties": {
+      "type": "string"
+    },
+    "action_date": {
+      "type": "Long"
+    },
+    "empty_area": {
+      "type": "Object"
+    }
+    
+  }
+}

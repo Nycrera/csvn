@@ -4,8 +4,9 @@ package core.kafka.communication.types;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "sender_id",
@@ -15,7 +16,7 @@ import java.io.Serializable;
     "action_date",
     "empty_area"
 })
-public class Action implements Serializable{
+public class Action implements Serializable {
 
     @JsonProperty("sender_id")
     private String senderId;
