@@ -774,7 +774,7 @@ public class csvnUI extends JFrame {
             @Override
             public void run() {
                 try {
-                    guncelle(App.vericek(), mainbtn9,statusbutton);
+                    guncelle(App.vericek(), mainbtn9,statusencoderbutton);
                 } catch (java.lang.Exception e) {
                     e.printStackTrace();
                 }
