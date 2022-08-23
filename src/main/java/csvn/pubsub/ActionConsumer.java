@@ -24,17 +24,13 @@ import csvn.KafkaActionListener;
 
 public class ActionConsumer {
     static Logger logger = LogManager.getLogger(ActionProducer.class.getName());
-    public static void main(String[] args) {
-        logger.info("Status consumer starting...");
-        startConsumer();
-    }
     
-    private static KafkaActionListener KafkaListener;
+    public static KafkaActionListener KafkaListener;
     public void registerActionListener(KafkaActionListener listener) {
     	KafkaListener = listener;
     }
     
-    public static void startConsumer() {
+    public void startConsumer() {
         KafkaConsumer<String, Action> kafkaConsumer = getKafkaConsumer();
         kafkaConsumer.subscribe(Collections.singletonList(IAppConfigs.ACTION_TOPIC));
         logger.info("Consumer initialized!");
@@ -42,7 +38,7 @@ public class ActionConsumer {
             try {
                 ConsumerRecords<String, Action> actionRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 actionRecords.forEach(record -> {
-                    System.out.println(record.value().toString());
+                    //System.out.println(record.value().toString());
                     // Something happened
                     KafkaListener.KafkaAction(record.value().toString());
                 });

@@ -1,21 +1,19 @@
 package csvn;
 
-public class App implements KafkaActionListener {
+import csvn.pubsub.ActionConsumer;
+
+public class App {
 	public static void main(String[] args) {
 		System.out.println("Hello world.");
-		try {
-		System.out.println(Util.DetectOpconUsingIP());
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
+		Runnable runnable = () -> {
+		KafkaActionHandler actionhandler = new KafkaActionHandler(); 
+		};
+		Thread KafkaActionReceiverThread = new Thread(runnable);
+		KafkaActionReceiverThread.start();
 		
 		// Start UI
 		csvnUI ui = new csvnUI();
 		ui.main(args);
-		
-	}
-	
-	public void KafkaAction(String data) {
 		
 	}
 }
