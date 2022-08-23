@@ -88,7 +88,7 @@ public class csvnUI extends JFrame {
                 btnvoid.setText("Storage %" + a);
                 btnvoid.repaint();
 
-                System.out.println(a);
+                //System.out.println(a);
             } else {
 
                 mainbtn9.setBackground(Color.RED);
