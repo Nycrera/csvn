@@ -39,9 +39,10 @@ public class StatusProducer {
         Thread.sleep(2);
 
     }*/
-    public static void publishMessage() throws InterruptedException{
+    public  void publishMessage(Status status) throws InterruptedException{
+        
         try (KafkaProducer<String, Status> kafkaProducer = new KafkaProducer<String, Status>(getKafkaProducerConfig())) {
-            Status status = getStatus();
+            
             
             ProducerRecord<String, Status> statusRecord = new ProducerRecord<>(IAppConfigs.STATUS_TOPIC,
                     "status", status);
@@ -55,24 +56,7 @@ public class StatusProducer {
         Thread.sleep(2);
     }
 
-    private static Status getStatus() {
-        Status status = new Status();
-        File diskPartition = new File("/");
-        long totalCapacity = diskPartition.getTotalSpace();
-        long freePartitionSpace = diskPartition.getFreeSpace();
-        long usablePatitionSpace = diskPartition.getUsableSpace();
-        Boolean[] systemLiveStatus = new Boolean[]{true, true, true};
-        Boolean[] consoleRecordStatus = new Boolean[]{true, false, true}; // konsol durum
-        Boolean[] displayRecordStatus = new Boolean[]{true, true, true};
-        status.setDiskSize(totalCapacity);
-        status.setFreeDiskPartition(freePartitionSpace);
-        status.setUsableDiskPartition(usablePatitionSpace);
-        status.setSystemLiveStatus(systemLiveStatus);
-        status.setConsoleRecordStatus(consoleRecordStatus);
-        status.setDisplayRecordStatus(displayRecordStatus);
-
-        return status;
-    }
+    
 
     private static Properties getKafkaProducerConfig() {
         Properties props = new Properties();

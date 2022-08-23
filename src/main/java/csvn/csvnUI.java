@@ -46,6 +46,8 @@ import javax.swing.table.TableRowSorter;
 import core.themes.Colors;
 import csvn.pubsub.StatusProducer;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,19 +64,25 @@ public class csvnUI extends JFrame {
     Color dpanel = new Color(170, 170, 170);
     Color dspanel = new Color(140, 140, 140);
     Color dcomponent = new Color(130, 130, 130);
-    
+
     public void guncelle(Status status, JButton btnvoid) {
         long totalsize = Long.valueOf(status.getDiskSize().toString());
         long usabledisk = Long.valueOf(status.getUsableDiskPartition().toString());
         long a = (100 * (totalsize - usabledisk) / totalsize);
-
+        if(a>80){
+           
+            mainbtn9.setBackground(Color.RED);
+        }else if(a > 50){
+            mainbtn9.setBackground(Color.YELLOW);
+        }
+        else{
+            mainbtn9.setBackground(Color.GREEN);
+        }
         btnvoid.setText("Storage %" + a);
         btnvoid.repaint();
         System.out.println(a);
 
     }
-    
-    
 
     DefaultTableModel modeldst = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
@@ -406,7 +414,7 @@ public class csvnUI extends JFrame {
         sttngpanel.setBounds(0, 37, 862, 398);
         contentPane.add(sttngpanel);
         sttngpanel.setLayout(null);
-        guncelle(App.vericek(),mainbtn9);
+
         JPanel statuspanel = new JPanel();
         statuspanel.setBounds(0, 37, 862, 398);
         contentPane.add(statuspanel);
@@ -529,13 +537,7 @@ public class csvnUI extends JFrame {
                 rcrdpanel.setVisible(true);
                 rplypanel.setVisible(false);
                 dstpanel.setVisible(false);
-                try {
-                    // TODO add your handling code here:
-                    StatusProducer.publishMessage();
-                    System.out.println("okk");
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(csvnUI.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                
                 sttngpanel.setVisible(false);
                 statuspanel.setVisible(false);
 
@@ -732,6 +734,17 @@ public class csvnUI extends JFrame {
                 }
             }
         });
+        ScheduledThreadPoolExecutor statusThread = new ScheduledThreadPoolExecutor(1);
+        statusThread.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                   guncelle(App.vericek(),mainbtn9);
+                } catch (java.lang.Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1000, TimeUnit.MILLISECONDS);
 
     }
 
@@ -740,5 +753,4 @@ public class csvnUI extends JFrame {
      * @param status
      * @param mainbtn9
      */
-    
 }

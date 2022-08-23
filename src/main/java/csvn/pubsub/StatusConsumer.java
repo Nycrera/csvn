@@ -21,15 +21,17 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import core.kafka.serialization.ObjectDeserializer;
+import csvn.KafkaStatusListener;
+
 
 public class StatusConsumer {
     static Logger logger = LogManager.getLogger(StatusProducer.class.getName());
-    public static void main(String[] args) {
-        logger.info("Status consumer starting...");
-        startConsumer();
+     public static KafkaStatusListener KafkaListener;
+    public void registerStatusListener(KafkaStatusListener listener) {
+    	KafkaListener = listener;
     }
 
-    public static void startConsumer() {
+    public void startConsumer() {
         KafkaConsumer<String, Status> kafkaConsumer = getKafkaConsumer();
         kafkaConsumer.subscribe(Collections.singletonList(IAppConfigs.STATUS_TOPIC));
         logger.info("Consumer initialized!");
@@ -37,7 +39,9 @@ public class StatusConsumer {
             try {
                 ConsumerRecords<String, Status> orderRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 orderRecords.forEach(record -> {
-                    System.out.println(record.value().toString());
+                    //System.out.println(record.value().toString());
+                    KafkaListener.KafkaAction(record.value());
+
                 });
             } catch (NullPointerException npe) {
                 npe.printStackTrace();
@@ -45,12 +49,12 @@ public class StatusConsumer {
         }
     }
 
-    public static KafkaConsumer<String, Status> getKafkaConsumer() {
+    public KafkaConsumer<String, Status> getKafkaConsumer() {
         KafkaConsumer<String, Status> kafkaConsumer = new KafkaConsumer<String, Status>(getKafkaConsumerConfig());
         return kafkaConsumer;
     }
 
-    private static Properties getKafkaConsumerConfig() {
+    private  Properties getKafkaConsumerConfig() {
         Properties consumerProps = new Properties();
         consumerProps.put(ConsumerConfig.CLIENT_ID_CONFIG, IAppConfigs.APPLICATION_ID_CONFIG);
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, IAppConfigs.BOOTSTAP_SERVER);

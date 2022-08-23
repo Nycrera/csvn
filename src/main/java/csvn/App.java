@@ -1,5 +1,6 @@
 package csvn;
 
+import core.kafka.communication.types.Status;
 import java.lang.reflect.InvocationTargetException;
 
 import org.bytedeco.ffmpeg.global.avutil;
@@ -9,8 +10,13 @@ import org.bytedeco.javacv.FFmpegLogCallback;
 import csvn.pubsub.ActionConsumer;
 
 public class App {
-	public static void main(String[] args) throws InvocationTargetException, InterruptedException {
-		FFmpegLogCallback.setLevel(avutil.AV_LOG_INFO);
+    public static Status status;
+
+    
+    public static void main(String[] args) throws InvocationTargetException, InterruptedException {
+        
+        ServerManager.main(args);
+        FFmpegLogCallback.setLevel(avutil.AV_LOG_INFO);
         FFmpegLogCallback.set(); // Sets FFMpeg to direct its logs.
 
         try {
@@ -18,16 +24,28 @@ public class App {
         } catch (org.bytedeco.javacv.FFmpegFrameGrabber.Exception e1) {
             e1.printStackTrace();
         }
+
+        System.out.println("Hello world.");
+
+        csvnUI ui = new csvnUI();
+        Runnable runnable = () -> {
+            KafkaActionHandler actionhandler = new KafkaActionHandler(ui);
+        };
+        Thread KafkaActionReceiverThread = new Thread(runnable);
+        KafkaActionReceiverThread.start();
         
-		System.out.println("Hello world.");
-		
-		csvnUI ui = new csvnUI();
-		Runnable runnable = () -> {
-		KafkaActionHandler actionhandler = new KafkaActionHandler(ui); 
-		};
-		Thread KafkaActionReceiverThread = new Thread(runnable);
-		KafkaActionReceiverThread.start();
-		ui.main(args);
-		
-	}
+        
+        Runnable runnable1 = () -> {
+            KafkaStatusHandler statusHandler = new KafkaStatusHandler(ui);
+        };
+        Thread KafkaStatusReceiverThread = new Thread(runnable1);
+        KafkaStatusReceiverThread.start();
+        ui.main(args);
+        
+    }
+
+    public static Status vericek() {
+        
+        return status;
+    }
 }

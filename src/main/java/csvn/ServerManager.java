@@ -1,0 +1,54 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package csvn;
+
+import core.kafka.communication.types.Status;
+import csvn.pubsub.StatusProducer;
+import java.io.File;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+/**
+ *
+ * @author asimkaymak
+ */
+public class ServerManager {
+
+    public static void main(String[] args) {
+        ScheduledThreadPoolExecutor publisherThread = new ScheduledThreadPoolExecutor(1);
+        publisherThread.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StatusProducer statusProducer = new StatusProducer();
+                    statusProducer.publishMessage(getStatus());
+                } catch (InterruptedException e) {
+                }
+            }
+        }, 0, 1000, TimeUnit.MILLISECONDS);
+    }
+
+
+    private static Status getStatus() {
+        Status status = new Status();
+        File diskPartition = new File("/");
+        long totalCapacity = diskPartition.getTotalSpace();
+        long freePartitionSpace = diskPartition.getFreeSpace();
+        long usablePatitionSpace = diskPartition.getUsableSpace();
+
+        //ping management
+        Boolean[] systemLiveStatus = new Boolean[]{true, true, true};
+        Boolean[] consoleRecordStatus = new Boolean[]{true, false, true}; // konsol durum
+        Boolean[] displayRecordStatus = new Boolean[]{true, true, true};
+        status.setDiskSize(totalCapacity);
+        status.setFreeDiskPartition(freePartitionSpace);
+        status.setUsableDiskPartition(usablePatitionSpace);
+        status.setSystemLiveStatus(systemLiveStatus);
+        status.setConsoleRecordStatus(consoleRecordStatus);
+        status.setDisplayRecordStatus(displayRecordStatus);
+
+        return status;
+    }
+}
