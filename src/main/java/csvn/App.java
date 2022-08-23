@@ -1,19 +1,31 @@
 package csvn;
 
-import core.kafka.communication.types.Status;
-import java.lang.reflect.InvocationTargetException;
+import org.bytedeco.ffmpeg.global.avutil;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FFmpegLogCallback;
+
+import csvn.pubsub.ActionConsumer;
 
 public class App {
+	public static void main(String[] args) {
+		FFmpegLogCallback.setLevel(avutil.AV_LOG_INFO);
+        FFmpegLogCallback.set(); // Sets FFMpeg to direct its logs.
 
-	public static void main(String[] args) throws InterruptedException, InvocationTargetException {
-		System.out.println("Hello world.");
-		csvnUI ui = new csvnUI();
-		ui.main(args);
-	}
-        public static Status vericek(){
-            Status s = new Status();
-                s.setDiskSize(3002123);
-                s.setUsableDiskPartition(2931231);
-                return s;
+        try {
+            FFmpegFrameGrabber.tryLoad();
+        } catch (org.bytedeco.javacv.FFmpegFrameGrabber.Exception e1) {
+            e1.printStackTrace();
         }
+        
+		System.out.println("Hello world.");
+		
+		csvnUI ui = new csvnUI();
+		Runnable runnable = () -> {
+		KafkaActionHandler actionhandler = new KafkaActionHandler(ui); 
+		};
+		Thread KafkaActionReceiverThread = new Thread(runnable);
+		KafkaActionReceiverThread.start();
+		ui.main(args);
+		
+	}
 }
