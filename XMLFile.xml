@@ -2,7 +2,7 @@
 <modules>  
     <module id="1">  
         <id>OPCON-1</id>  
-        <ipAdress>201.0.1.11</ipAdress>  
+        <ipAdress>127.0.0.1</ipAdress>  
         <encoder>192.168.1.101</encoder>  
         <decoder>192.168.1.101</decoder>  
         <type>CONSOLE</type> 

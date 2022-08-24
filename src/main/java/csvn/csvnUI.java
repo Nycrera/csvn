@@ -45,6 +45,7 @@ import javax.swing.JToggleButton;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import core.themes.Colors;
+import csvn.pubsub.ActionProducer;
 import csvn.pubsub.StatusProducer;
 import java.lang.reflect.InvocationTargetException;
 import static java.util.Objects.nonNull;
@@ -708,11 +709,21 @@ public class csvnUI extends JFrame {
 
         dstbtn1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                
                 modeldst.addRow(new Object[]{
                     dstcombo1.getSelectedItem().toString(),
                     "        >>>>",
                     dstcombo2.getSelectedItem().toString()});
+                Map<String,String> properties = new HashMap<String,String>();
+                properties.put("FROM", dstcombo1.getSelectedItem().toString());
+                properties.put("TO", dstcombo2.getSelectedItem().toString());
+                properties.put("MULTICASTIP", "127.0.0.1");
+                properties.put("MULTICASTPORT", "1234");
+                try{
+                ActionProducer.Send("STREAM","START", properties);
+                } catch (Exception ex) {
+                    Logger.getLogger(csvnUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         ScheduledThreadPoolExecutor statusThread = new ScheduledThreadPoolExecutor(1);
