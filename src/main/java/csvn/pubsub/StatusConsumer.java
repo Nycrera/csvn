@@ -39,7 +39,7 @@ public class StatusConsumer {
             try {
                 ConsumerRecords<String, Status> orderRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 orderRecords.forEach(record -> {
-                    //System.out.println(record.value().toString());
+                    System.out.println(record.value().toString());
                     KafkaListener.KafkaAction(record.value());
 
                 });

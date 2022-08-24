@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author asimkaymak
  */
 public class ServerManager {
-
+    public static ArrayList<Boolean> consoleRecordStatus = Util.recordStatusCreator();
     public static void main(String[] args) {
         ScheduledThreadPoolExecutor publisherThread = new ScheduledThreadPoolExecutor(1);
         publisherThread.scheduleAtFixedRate(new Runnable() {
@@ -42,7 +42,7 @@ public class ServerManager {
 
         //ping management
         ArrayList<Boolean> systemLiveStatus = PingUtil.opconPingController();
-        Boolean[] consoleRecordStatus = new Boolean[]{true, false, true}; // konsol durum
+         // konsol durum
         Boolean[] displayRecordStatus = new Boolean[]{true, true, true};
         status.setDiskSize(totalCapacity);
         status.setFreeDiskPartition(freePartitionSpace);

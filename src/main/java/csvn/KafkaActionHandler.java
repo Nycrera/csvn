@@ -40,11 +40,17 @@ public class KafkaActionHandler implements KafkaActionListener {
 						streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"), streamer);
 						streamer.Start();
+                                                if(Util.DetectIfServer()){
+                                                    ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", ""))-1,true );
+                                                }
 					} else if (data.getAction().equals("STOP")) {
 						ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
 						if (streamer != null)
 							streamer.Stop();
+                                                if(Util.DetectIfServer()){
+                                                    ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", ""))-1,false );
+                                                }
 					}
 				}
 				if (propertyMap.get("TO").equals(opconID)) {
