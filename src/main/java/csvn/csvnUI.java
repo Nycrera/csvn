@@ -848,13 +848,41 @@ public class csvnUI extends JFrame {
 
         rcrdbtn1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Map<String, String> properties = new HashMap<String, String>();
+                int rownum = rcrdtable.getSelectedRow();
 
+                properties.put("FROM", rcrdtable.getValueAt(rownum, 0).toString());
+                properties.put("MULTICASTIP", "127.0.0.1");
+                properties.put("MULTICASTPORT", "1234");
+                properties.put("PERIOD",rcrdcombo1.getSelectedItem().toString());
+                properties.put("PRIORITY","NORMAL");
+                properties.put("NAME",rcrdtxt.getText());
+                try {
+                    ActionProducer.Send("RECORD", "STOP", properties);
+                    
+                } catch (Exception err) {
+                    err.printStackTrace();
+                }
             }
         });
 
         rcrdbtn2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Map<String, String> properties = new HashMap<String, String>();
+                int rownum = rcrdtable.getSelectedRow();
 
+                properties.put("FROM", rcrdtable.getValueAt(rownum, 0).toString());
+                properties.put("MULTICASTIP", "127.0.0.1");
+                properties.put("MULTICASTPORT", "1234");
+                //properties.put("PERIOD",rcrdcombo1.getSelectedItem().toString());
+                properties.put("PRIORITY","NORMAL");
+                properties.put("NAME",rcrdtable.getValueAt(rownum, 2).toString());
+                try {
+                    ActionProducer.Send("RECORD", "STOP", properties);
+                    
+                } catch (Exception err) {
+                    err.printStackTrace();
+                }
             }
         });
 
@@ -867,6 +895,7 @@ public class csvnUI extends JFrame {
                 properties.put("TO", destination);
                 properties.put("MULTICASTIP", "127.0.0.1");
                 properties.put("MULTICASTPORT", "1234");
+                
                 try {
                     ActionProducer.Send("REPLAY", "START", properties);
                 } catch (Exception err) {
