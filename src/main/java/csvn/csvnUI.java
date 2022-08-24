@@ -1,5 +1,6 @@
 package csvn;
 
+import core.connection.PingUtil;
 import core.kafka.communication.types.Record;
 import core.kafka.communication.types.Status;
 import core.models.DateConverter;
@@ -743,16 +744,23 @@ public class csvnUI extends JFrame {
             @Override
             public void run() {
                 try {
+                    if (PingUtil.serverPingController()) {
+
+                        mainbtn7.setBackground(Color.GREEN);
+                    } else {
+                        mainbtn7.setBackground(Color.RED);
+                    }
                     guncelle(App.vericek(), mainbtn9);
                     try {
                         List<Record> liste = statusModel.getOpconRecordStatus();
+
                         List<Boolean> durumliste = statusModel.getOpconPingStatus();
                         for (int i = 0; i < liste.size(); i++) {
                             modelrcrd.setValueAt(liste.get(i).getSource(), i, 0);
                             modelrcrd.setValueAt(liste.get(i).getStatus() ? "Available" : "Recording", i, 1);
                             modelrcrd.setValueAt(liste.get(i).getName(), i, 2);
                             modelrcrd.setValueAt(nonNull(liste.get(i).getStartTime()) ? DateConverter.longToStringDate(Long.valueOf(String.valueOf(liste.get(i).getStartTime()))) : "", i, 3);
-                            modelrcrd.setValueAt(durumliste.get(i) ? "Connected" : "Not Connected",i,4);
+                            modelrcrd.setValueAt(durumliste.get(i) ? "Connected" : "Not Connected", i, 4);
 
                         }
                         for (int i = 0; i < statusbutton.length; i++) {
@@ -832,13 +840,20 @@ public class csvnUI extends JFrame {
         rcrdtable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 String rcrdstring = null;
+                String rcrdstring1 = null;
                 rcrdstring = rcrdtable.getValueAt(rcrdtable.getSelectedRow(), 1).toString();
-                if (rcrdstring.equals("Available")) {
-                    rcrdbtn1.setEnabled(true);
+                rcrdstring1 = rcrdtable.getValueAt(rcrdtable.getSelectedRow(), 4).toString();
+                if (rcrdstring1.equals("Not Connected")) {
+                    rcrdbtn1.setEnabled(false);
                     rcrdbtn2.setEnabled(false);
                 } else {
-                    rcrdbtn1.setEnabled(true);
-                    rcrdbtn2.setEnabled(true);
+                    if (rcrdstring.equals("Available")) {
+                        rcrdbtn1.setEnabled(true);
+                        rcrdbtn2.setEnabled(false);
+                    } else {
+                        rcrdbtn1.setEnabled(false);
+                        rcrdbtn2.setEnabled(true);
+                    }
                 }
 
             }
@@ -852,12 +867,12 @@ public class csvnUI extends JFrame {
                 properties.put("FROM", rcrdtable.getValueAt(rownum, 0).toString());
                 properties.put("MULTICASTIP", "127.0.0.1");
                 properties.put("MULTICASTPORT", "1234");
-                properties.put("PERIOD",rcrdcombo1.getSelectedItem().toString());
-                properties.put("PRIORITY","NORMAL");
-                properties.put("NAME",rcrdtxt.getText());
+                properties.put("PERIOD", rcrdcombo1.getSelectedItem().toString());
+                properties.put("PRIORITY", "NORMAL");
+                properties.put("NAME", rcrdtxt.getText());
                 try {
                     ActionProducer.Send("RECORD", "START", properties);
-                    
+
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
@@ -873,12 +888,11 @@ public class csvnUI extends JFrame {
                 properties.put("MULTICASTIP", "127.0.0.1");
                 properties.put("MULTICASTPORT", "1234");
                 //properties.put("PERIOD",rcrdcombo1.getSelectedItem().toString());
-                properties.put("PRIORITY","NORMAL");
-                properties.put("NAME",rcrdtable.getValueAt(rownum, 2).toString());
+                properties.put("PRIORITY", "NORMAL");
+                properties.put("NAME", rcrdtable.getValueAt(rownum, 2).toString());
                 try {
                     ActionProducer.Send("RECORD", "STOP", properties);
-                    
-                    
+
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
@@ -894,7 +908,7 @@ public class csvnUI extends JFrame {
                 properties.put("TO", destination);
                 properties.put("MULTICASTIP", "127.0.0.1");
                 properties.put("MULTICASTPORT", "1234");
-                
+
                 try {
                     ActionProducer.Send("REPLAY", "START", properties);
                 } catch (Exception err) {

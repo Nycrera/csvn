@@ -6,7 +6,9 @@ package core.connection;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -43,5 +45,23 @@ public class PingUtil {
         } catch (Exception f) {
             return opconsPing;
         }
+    }
+
+    public static Boolean serverPingController() {
+        try {
+            File xmlfile = new File("Serverconfig.xml");
+            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dbbuild = dbfac.newDocumentBuilder();
+            Document xmldoc = dbbuild.parse(xmlfile);
+            xmldoc.getDocumentElement().normalize();
+            Element serverEl = (Element) xmldoc.getElementsByTagName("server").item(0);
+
+            InetAddress address = InetAddress.getByName(serverEl.getElementsByTagName("ipaddress").item(0).getTextContent());
+            System.out.println(serverEl.getElementsByTagName("ipaddress").item(0).getTextContent());
+            return address.isReachable(250);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }// If all checks fell, I am not the server.
     }
 }
