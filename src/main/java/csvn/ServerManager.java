@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 public class ServerManager {
     public static ArrayList<Boolean> consoleLiveStatus = Util.liveStatusCreator();
     public static ArrayList<Record> consoleRecordStatus = Util.recordStatusCreator();
-    
     public static void main(String[] args) {
         ScheduledThreadPoolExecutor publisherThread = new ScheduledThreadPoolExecutor(1);
         publisherThread.scheduleAtFixedRate(new Runnable() {
@@ -54,6 +53,7 @@ public class ServerManager {
         status.setOpconPingStatus(systemLiveStatus);
         status.setOpconLiveStatus(consoleLiveStatus);
         status.setOpconRecordStatus(consoleRecordStatus);
+        status.setCoderPingStatus(PingUtil.coderPingController());
         
 
         return status;

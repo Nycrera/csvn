@@ -766,6 +766,10 @@ public class csvnUI extends JFrame {
                         for (int i = 0; i < statusbutton.length; i++) {
                             statusbutton[i].setBackground(statusModel.getOpconPingStatus().get(i) ? Color.GREEN : Color.RED);
                         }
+                        for (int i = 0; i < statusencoderbutton.length; i++) {
+                            statusencoderbutton[i].setBackground(statusModel.getCoderPingStatus().get(i) ? Color.GREEN : Color.RED);
+                        }
+
 
                     } catch (Exception f) {
                     }
