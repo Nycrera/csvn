@@ -663,15 +663,13 @@ public class csvnUI extends JFrame {
                 dstpanel.setVisible(false);
                 sttngpanel.setVisible(false);
                 statuspanel.setVisible(false);
-                File folder = new File("/var/tmp/videos/");
-                File[] filelist = folder.listFiles();
 
                 for (int l = modelrply.getRowCount() - 1; l >= 0; l--) {
                     modelrply.removeRow(l);
                 }
-
-                for (int k = 0; k < filelist.length; k++) {
-                    modelrply.addRow(new Object[]{filelist[k].getName()});
+                List<String> liste = statusModel.getReplayFiles();
+                for (int k = 0; k < liste.size(); k++) {
+                    modelrply.addRow(new Object[]{liste.get(k)});
                 }
             }
         });
