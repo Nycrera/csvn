@@ -1,6 +1,8 @@
 package csvn;
 
+import core.kafka.communication.types.Record;
 import core.kafka.communication.types.Status;
+import core.models.DateConverter;
 import core.models.ObjectConverter;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -743,6 +745,21 @@ public class csvnUI extends JFrame {
             public void run() {
                 try {
                     guncelle(App.vericek(), mainbtn9);
+                    try {
+                        List<Record> liste = statusModel.getOpconRecordStatus();
+                        for (int i = 0; i < liste.size(); i++) {
+                            modelrcrd.setValueAt(liste.get(i).getSource(), i, 0);
+                            modelrcrd.setValueAt(liste.get(i).getStatus() ? "Available" : "Not Available", i, 1);
+                            modelrcrd.setValueAt(liste.get(i).getName(), i, 2);
+                            modelrcrd.setValueAt(nonNull(liste.get(i).getStartTime()) ? DateConverter.longToStringDate(Long.valueOf(String.valueOf(liste.get(i).getStartTime()))) : "", i, 3);
+                            
+                        }
+                        for(int i = 0;i<statusbutton.length;i++){
+                            statusbutton[i].setBackground(statusModel.getOpconPingStatus().get(i) ? Color.GREEN : Color.RED);
+                        }
+
+                    } catch (Exception f) {
+                    }
                 } catch (java.lang.Exception e) {
                     e.printStackTrace();
                 }
@@ -786,14 +803,14 @@ public class csvnUI extends JFrame {
                             Node node = nodeList.item(i);
                             Element eElement = (Element) node;
                             
-                            statusencoderbutton[i] = new JButton(eElement.getElementsByTagName("id").item(0).getTextContent());
-                            statusencoderbutton[i].setBounds(40 + sayac2 * 420, 40 + sayac1 * 60, 100, 50);
-                            statusencoderbutton[i].setBackground(dcomponent);
-                            statuspanel.add(statusencoderbutton[i]);
-                            statusbutton[i] = new JButton("ENCODER/DECODER");
-                            statusbutton[i].setBounds(190 + sayac2 * 420, 40 + sayac1 * 60, 200, 50);
+                            statusbutton[i] = new JButton(eElement.getElementsByTagName("id").item(0).getTextContent());
+                            statusbutton[i].setBounds(40 + sayac2 * 420, 40 + sayac1 * 60, 100, 50);
                             statusbutton[i].setBackground(dcomponent);
                             statuspanel.add(statusbutton[i]);
+                            statusencoderbutton[i] = new JButton("ENCODER/DECODER");
+                            statusencoderbutton[i].setBounds(190 + sayac2 * 420, 40 + sayac1 * 60, 200, 50);
+                            statusencoderbutton[i].setBackground(dcomponent);
+                            statuspanel.add(statusencoderbutton[i]);
                             statuslabel[i] = new JLabel("----");
                             statuslabel[i].setBounds(150 + sayac2 * 420, 40 + sayac1 * 60, 30, 50);
                             statuslabel[i].setFont(new Font("Times New Roman", Font.PLAIN, 14));
