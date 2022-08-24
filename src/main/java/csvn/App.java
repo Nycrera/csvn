@@ -16,7 +16,7 @@ public class App {
     
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
         //SERVER CHECK
-    	if(Gst.isInitialized()) Gst.deinit();
+    	//if(Gst.isInitialized()) Gst.deinit();
         if(Util.DetectIfServer()){
             System.out.println("ok server");
             ServerManager.main(args);

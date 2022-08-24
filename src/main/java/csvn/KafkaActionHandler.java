@@ -17,7 +17,7 @@ public class KafkaActionHandler implements KafkaActionListener {
     Map<String, ScreenStreamer> streamers = new HashMap<String, ScreenStreamer>();
     Map<String, StreamPlayer> players = new HashMap<String, StreamPlayer>();
     Map<String, StreamRecorder> recorders = new HashMap<String, StreamRecorder>();
-    Map<String, VideoStreamer> vstreamers = new HashMap<String, VideoStreamer>();
+    Map<String, VideoStreamerAlt> vstreamers = new HashMap<String, VideoStreamerAlt>();
 
     public KafkaActionHandler(csvnUI UI) {
         ui = UI;
@@ -41,7 +41,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                                 return; // Ignore if stream already is running
                             }
                             ScreenStreamer streamer = new ScreenStreamer((String) propertyMap.get("MULTICASTIP"),
-                                  (String) propertyMap.get("MULTICASTPORT"), false);
+                                  (String) propertyMap.get("MULTICASTPORT"), true);
                             streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
                              + (String) propertyMap.get("MULTICASTPORT"), streamer);
                             streamer.Start();
@@ -147,7 +147,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                                 try {
 
                                     ScreenStreamer streamer = new ScreenStreamer((String) propertyMap.get("MULTICASTIP"),
-                                            (String) propertyMap.get("MULTICASTPORT"), false);
+                                            (String) propertyMap.get("MULTICASTPORT"), true);
                                     streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
                                             + (String) propertyMap.get("MULTICASTPORT"), streamer);
                                     streamer.Start();
@@ -181,13 +181,13 @@ public class KafkaActionHandler implements KafkaActionListener {
                                     + (String) propertyMap.get("MULTICASTPORT")) != null) {
                                 return; // Ignore if replay already is running
                             }
-                            VideoStreamer vstreamer = new VideoStreamer("/var/tmp/" + (String) propertyMap.get("FILE"),
+                            VideoStreamerAlt vstreamer = new VideoStreamerAlt("/var/tmp/" + (String) propertyMap.get("FILE"),
                                     (String) propertyMap.get("MULTICASTIP"), (String) propertyMap.get("MULTICASTPORT"));
                             vstreamers.put((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"), vstreamer);
                             vstreamer.Start();
                         } else if (data.getAction().equals("STOP")) {
-                            VideoStreamer vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                        	VideoStreamerAlt vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
                             if (vstreamer != null) {
                                 vstreamer.Stop();
@@ -195,7 +195,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                                         + (String) propertyMap.get("MULTICASTPORT"));
                             }
                         } else if (data.getAction().equals("SEEK")) {
-                            VideoStreamer vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                        	VideoStreamerAlt vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
                             if (vstreamer != null) {
                                 vstreamer.Seek(Long.parseLong((String) propertyMap.get("TIME")));
