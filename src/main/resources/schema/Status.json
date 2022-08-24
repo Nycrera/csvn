@@ -33,6 +33,12 @@
        "items": {
         "$ref":"Record.json"
       }
+      },
+      "replayFiles": {
+      "type": "array",
+       "items": {
+        "type": "string"
+      }
     }
   }
 }

@@ -14,13 +14,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -243,7 +249,8 @@ public class Util {
         }
         return list;
     }
-    public static ArrayList<Boolean> liveStatusCreator(){
+
+    public static ArrayList<Boolean> liveStatusCreator() {
         ArrayList<Boolean> list = new ArrayList<Boolean>();
         try {
             File xmlfile = new File("XMLFile.xml");
@@ -264,7 +271,8 @@ public class Util {
             return list;
         }
     }
-    public static ArrayList<Record> recordStatusCreator(){
+
+    public static ArrayList<Record> recordStatusCreator() {
         ArrayList<Record> list = new ArrayList<Record>();
         try {
             File xmlfile = new File("XMLFile.xml");
@@ -278,13 +286,13 @@ public class Util {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
                     Record record = new Record();
-                    
+
                     String nodename = eElement.getElementsByTagName("id").item(0).getTextContent();
-                    
+
                     record.setName("");
                     record.setSource(nodename);
                     record.setStatus(true);
-                    
+
                     list.add(record);
                 }
             }
@@ -292,6 +300,26 @@ public class Util {
         } catch (Exception f) {
             return list;
         }
+    }
+
+    public static List<String> deneme() {
+        //Creating a File object for directory
+        
+
+        // Creates a new File instance by converting the given pathname string
+        // into an abstract pathname
+        File f = new File("/var/tmp");
+
+        // Populates the array with names of files and directories
+        List<String> pathnames = new ArrayList<String>();  
+        String [] files = f.list();
+        // For each pathname in the pathnames array
+        for(int i=0;i<files.length;i++){
+            if(files[i].endsWith(".mp4")){
+                pathnames.add(files[i]);
+            }
+        }
+        return pathnames;
     }
 
 }

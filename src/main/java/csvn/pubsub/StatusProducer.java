@@ -46,7 +46,6 @@ public class StatusProducer {
             ProducerRecord<String, Status> statusRecord = new ProducerRecord<>(IAppConfigs.STATUS_TOPIC,
                     "status", status);
             kafkaProducer.send(statusRecord);
-            
             logger.info("Event published...");
             kafkaProducer.flush();
         }

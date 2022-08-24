@@ -17,7 +17,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "opconPingStatus",
     "coderPingStatus",
     "opconLiveStatus",
-    "opconRecordStatus"
+    "opconRecordStatus",
+    "replayFiles"
 })
 public class Status implements Serializable{
 
@@ -35,6 +36,8 @@ public class Status implements Serializable{
     private List<Boolean> opconLiveStatus = new ArrayList<Boolean>();
     @JsonProperty("opconRecordStatus")
     private List<Record> opconRecordStatus = new ArrayList<Record>();
+    @JsonProperty("replayFiles")
+    private List<String> replayFiles = new ArrayList<String>();
 
     @JsonProperty("diskSize")
     public Object getDiskSize() {
@@ -106,9 +109,19 @@ public class Status implements Serializable{
         this.opconRecordStatus = opconRecordStatus;
     }
 
+    @JsonProperty("replayFiles")
+    public List<String> getReplayFiles() {
+        return replayFiles;
+    }
+
+    @JsonProperty("replayFiles")
+    public void setReplayFiles(List<String> replayFiles) {
+        this.replayFiles = replayFiles;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("diskSize", diskSize).append("freeDiskPartition", freeDiskPartition).append("usableDiskPartition", usableDiskPartition).append("opconPingStatus", opconPingStatus).append("coderPingStatus", coderPingStatus).append("opconLiveStatus", opconLiveStatus).append("opconRecordStatus", opconRecordStatus).toString();
+        return new ToStringBuilder(this).append("diskSize", diskSize).append("freeDiskPartition", freeDiskPartition).append("usableDiskPartition", usableDiskPartition).append("opconPingStatus", opconPingStatus).append("coderPingStatus", coderPingStatus).append("opconLiveStatus", opconLiveStatus).append("opconRecordStatus", opconRecordStatus).append("replayFiles", replayFiles).toString();
     }
 
 }
