@@ -25,7 +25,7 @@ public class StreamPlayer {
 	private CanvasFrame Canvas;
 	private boolean Running = false;
 	private boolean Paused = false;
-
+	Thread t;
 	/*
 	 * Initializes a StreamPlayer.
 	 *
@@ -93,7 +93,9 @@ public class StreamPlayer {
 		Running = false;
 		Grabber.stop();
 		Grabber.close();
-		Canvas.dispose();
+		if(t.isAlive()) {
+			t.stop(); // Unsafe stop, last resort, shouldn't even need to execute anyway.
+		}
 	}
 
 	private void RunFFMpegThread() {
@@ -143,7 +145,7 @@ public class StreamPlayer {
 				e.printStackTrace();
 			}
 		};
-		Thread t = new Thread(runnable);
+		t = new Thread(runnable);
 		t.start();
 	}
 }
