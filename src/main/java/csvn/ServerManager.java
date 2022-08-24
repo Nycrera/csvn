@@ -5,6 +5,7 @@
 package csvn;
 
 import core.connection.PingUtil;
+import core.kafka.communication.types.Record;
 import core.kafka.communication.types.Status;
 import csvn.pubsub.StatusProducer;
 import java.io.File;
@@ -17,7 +18,8 @@ import java.util.concurrent.TimeUnit;
  * @author asimkaymak
  */
 public class ServerManager {
-    public static ArrayList<Boolean> consoleRecordStatus = Util.recordStatusCreator();
+    public static ArrayList<Boolean> consoleLiveStatus = Util.liveStatusCreator();
+    public static ArrayList<Record> consoleRecordStatus = Util.recordStatusCreator();
     public static void main(String[] args) {
         ScheduledThreadPoolExecutor publisherThread = new ScheduledThreadPoolExecutor(1);
         publisherThread.scheduleAtFixedRate(new Runnable() {
@@ -47,9 +49,10 @@ public class ServerManager {
         status.setDiskSize(totalCapacity);
         status.setFreeDiskPartition(freePartitionSpace);
         status.setUsableDiskPartition(usablePatitionSpace);
-        status.setSystemLiveStatus(systemLiveStatus);
-        status.setConsoleRecordStatus(consoleRecordStatus);
-        status.setDisplayRecordStatus(displayRecordStatus);
+        status.setOpconPingStatus(systemLiveStatus);
+        status.setOpconLiveStatus(consoleLiveStatus);
+        status.setOpconRecordStatus(consoleRecordStatus);
+        
 
         return status;
     }

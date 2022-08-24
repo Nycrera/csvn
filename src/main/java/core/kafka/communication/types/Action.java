@@ -16,7 +16,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "action_date",
     "empty_area"
 })
-public class Action implements Serializable{
+public class Action implements Serializable {
 
     @JsonProperty("sender_id")
     private String senderId;

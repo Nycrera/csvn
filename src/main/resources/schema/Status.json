@@ -11,27 +11,27 @@
     "usableDiskPartition": {
       "type": "long"
     },
+    "opconPingStatus": {
+      "type": "array",
+       "items": {
+        "type": "boolean"
+      }
+    },"coderPingStatus": {
+      "type": "array",
+       "items": {
+        "type": "boolean"
+      }
+    },
     "opconLiveStatus": {
       "type": "array",
        "items": {
         "type": "boolean"
       }
-    },"coderLiveStatus": {
-      "type": "array",
-       "items": {
-        "type": "boolean"
-      }
     },
-    "consoleRecordStatus": {
+    "opconRecordStatus": {
       "type": "array",
        "items": {
-        "type": "boolean"
-      }
-    },
-    "displayRecordStatus": {
-      "type": "array",
-       "items": {
-        "type": "boolean"
+        "$ref":"Record.json"
       }
     }
   }

@@ -1,5 +1,6 @@
 package csvn;
 
+import core.kafka.communication.types.Record;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -242,7 +243,7 @@ public class Util {
         }
         return list;
     }
-    public static ArrayList<Boolean> recordStatusCreator(){
+    public static ArrayList<Boolean> liveStatusCreator(){
         ArrayList<Boolean> list = new ArrayList<Boolean>();
         try {
             File xmlfile = new File("XMLFile.xml");
@@ -256,6 +257,35 @@ public class Util {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     list.add(Boolean.FALSE);
 
+                }
+            }
+            return list;
+        } catch (Exception f) {
+            return list;
+        }
+    }
+    public static ArrayList<Record> recordStatusCreator(){
+        ArrayList<Record> list = new ArrayList<Record>();
+        try {
+            File xmlfile = new File("XMLFile.xml");
+            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dbbuild = dbfac.newDocumentBuilder();
+            Document xmldoc = dbbuild.parse(xmlfile);
+            xmldoc.getDocumentElement().normalize();
+            NodeList nodeList = xmldoc.getElementsByTagName("module");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) node;
+                    Record record = new Record();
+                    
+                    String nodename = eElement.getElementsByTagName("id").item(0).getTextContent();
+                    
+                    record.setName("");
+                    record.setSource(nodename);
+                    record.setStatus(true);
+                    
+                    list.add(record);
                 }
             }
             return list;

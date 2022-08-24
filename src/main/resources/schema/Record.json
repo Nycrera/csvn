@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "javaType": "core.kafka.communication.types.Record",
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "status": {
+      "type": "boolean"
+    },
+    "name": {
+      "type": "string"
+    },
+    "start_time": {
+      "type": "Long"
+    }
+    
+  }
+}

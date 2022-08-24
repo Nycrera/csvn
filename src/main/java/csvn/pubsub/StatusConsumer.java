@@ -61,7 +61,7 @@ public class StatusConsumer {
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ObjectDeserializer.class);
         // consumerProps.put(CustomDeserializer.VALUE_CLASS_NAME_CONFIG, OrderInvoice.class);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "havelsan_grouup");
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "havelsan_grossuup");
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         return consumerProps;
     }

@@ -14,11 +14,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
     "diskSize",
     "freeDiskPartition",
     "usableDiskPartition",
-    "systemLiveStatus",
-    "consoleRecordStatus",
-    "displayRecordStatus"
+    "opconPingStatus",
+    "coderPingStatus",
+    "opconLiveStatus",
+    "opconRecordStatus"
 })
-public class Status implements Serializable {
+public class Status implements Serializable{
 
     @JsonProperty("diskSize")
     private Object diskSize;
@@ -26,12 +27,14 @@ public class Status implements Serializable {
     private Object freeDiskPartition;
     @JsonProperty("usableDiskPartition")
     private Object usableDiskPartition;
-    @JsonProperty("systemLiveStatus")
-    private List<Boolean> systemLiveStatus = new ArrayList<Boolean>();
-    @JsonProperty("consoleRecordStatus")
-    private Object consoleRecordStatus;
-    @JsonProperty("displayRecordStatus")
-    private Object displayRecordStatus;
+    @JsonProperty("opconPingStatus")
+    private List<Boolean> opconPingStatus = new ArrayList<Boolean>();
+    @JsonProperty("coderPingStatus")
+    private List<Boolean> coderPingStatus = new ArrayList<Boolean>();
+    @JsonProperty("opconLiveStatus")
+    private List<Boolean> opconLiveStatus = new ArrayList<Boolean>();
+    @JsonProperty("opconRecordStatus")
+    private List<Record> opconRecordStatus = new ArrayList<Record>();
 
     @JsonProperty("diskSize")
     public Object getDiskSize() {
@@ -63,39 +66,49 @@ public class Status implements Serializable {
         this.usableDiskPartition = usableDiskPartition;
     }
 
-    @JsonProperty("systemLiveStatus")
-    public List<Boolean> getSystemLiveStatus() {
-        return systemLiveStatus;
+    @JsonProperty("opconPingStatus")
+    public List<Boolean> getOpconPingStatus() {
+        return opconPingStatus;
     }
 
-    @JsonProperty("systemLiveStatus")
-    public void setSystemLiveStatus(List<Boolean> systemLiveStatus) {
-        this.systemLiveStatus = systemLiveStatus;
+    @JsonProperty("opconPingStatus")
+    public void setOpconPingStatus(List<Boolean> opconPingStatus) {
+        this.opconPingStatus = opconPingStatus;
     }
 
-    @JsonProperty("consoleRecordStatus")
-    public Object getConsoleRecordStatus() {
-        return consoleRecordStatus;
+    @JsonProperty("coderPingStatus")
+    public List<Boolean> getCoderPingStatus() {
+        return coderPingStatus;
     }
 
-    @JsonProperty("consoleRecordStatus")
-    public void setConsoleRecordStatus(Object consoleRecordStatus) {
-        this.consoleRecordStatus = consoleRecordStatus;
+    @JsonProperty("coderPingStatus")
+    public void setCoderPingStatus(List<Boolean> coderPingStatus) {
+        this.coderPingStatus = coderPingStatus;
     }
 
-    @JsonProperty("displayRecordStatus")
-    public Object getDisplayRecordStatus() {
-        return displayRecordStatus;
+    @JsonProperty("opconLiveStatus")
+    public List<Boolean> getOpconLiveStatus() {
+        return opconLiveStatus;
     }
 
-    @JsonProperty("displayRecordStatus")
-    public void setDisplayRecordStatus(Object displayRecordStatus) {
-        this.displayRecordStatus = displayRecordStatus;
+    @JsonProperty("opconLiveStatus")
+    public void setOpconLiveStatus(List<Boolean> opconLiveStatus) {
+        this.opconLiveStatus = opconLiveStatus;
+    }
+
+    @JsonProperty("opconRecordStatus")
+    public List<Record> getOpconRecordStatus() {
+        return opconRecordStatus;
+    }
+
+    @JsonProperty("opconRecordStatus")
+    public void setOpconRecordStatus(List<Record> opconRecordStatus) {
+        this.opconRecordStatus = opconRecordStatus;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("diskSize", diskSize).append("freeDiskPartition", freeDiskPartition).append("usableDiskPartition", usableDiskPartition).append("systemLiveStatus", systemLiveStatus).append("consoleRecordStatus", consoleRecordStatus).append("displayRecordStatus", displayRecordStatus).toString();
+        return new ToStringBuilder(this).append("diskSize", diskSize).append("freeDiskPartition", freeDiskPartition).append("usableDiskPartition", usableDiskPartition).append("opconPingStatus", opconPingStatus).append("coderPingStatus", coderPingStatus).append("opconLiveStatus", opconLiveStatus).append("opconRecordStatus", opconRecordStatus).toString();
     }
 
 }
