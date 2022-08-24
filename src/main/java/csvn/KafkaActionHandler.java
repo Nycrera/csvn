@@ -133,11 +133,20 @@ public class KafkaActionHandler implements KafkaActionListener {
                                     + (String) propertyMap.get("MULTICASTPORT")) != null) {
                                 return; // Ignore if stream already is running
                             }
+                            Runnable runnable = () -> { // FFMpeg Thread
+                                try {
+
                             ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
                                     (String) propertyMap.get("MULTICASTPORT"), false, ":0.0");
                             streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"), streamer);
                             streamer.Start();
+                                }catch(Exception err) {
+                                	err.printStackTrace();
+                                }
+                            };
+                            Thread t = new Thread(runnable);
+                            t.start();
                         } else if (data.getAction().equals("STOP")) {
                             ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
@@ -148,6 +157,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                             }
                         }
                     }
+                    System.out.println("Exitted the loop.");
                     break;
 
                 case "REPLAY":
