@@ -36,14 +36,14 @@ public class ScreenStreamer {
 		}
 		if (!enableVAAPI) {
 			pipeline = (Pipeline) Gst
-					.parseLaunch("ximagesrc ! video/x-raw,framerate=30/1 ! timeoverlay ! videoconvert ! x264enc "
+					.parseLaunch("ximagesrc ! video/x-raw,framerate=30/1 ! videoconvert ! x264enc "
 							+ " mpegtsmux name=m ! rtpmp2tpay ! udpsink host="
 							+ ipaddress + " port=" + port
 							+ " sync=false");
 		} else {
 			//See: https://gstreamer.freedesktop.org/documentation/vaapi/vaapih264enc.html?gi-language=c#vaapih264enc
 			pipeline = (Pipeline) Gst.parseLaunch(
-					"ximagesrc ! video/x-raw,framerate=30/1 ! timeoverlay ! videoconvert ! vaapih264enc bitrate=1000 quality-level=2 ! queue ! h264parse config-interval=-1 ! "
+					"ximagesrc ! video/x-raw,framerate=30/1 ! videoconvert ! vaapih264enc bitrate=1000 quality-level=2 ! queue ! h264parse config-interval=-1 ! "
 							+ "mpegtsmux name=m ! rtpmp2tpay ! udpsink host=" + ipaddress + " port=" + port
 							+ " sync=false");
 		}
@@ -61,5 +61,6 @@ public class ScreenStreamer {
 	 */
 	public void Stop() {
 		pipeline.stop();
+		pipeline.dispose();
 	}
 }

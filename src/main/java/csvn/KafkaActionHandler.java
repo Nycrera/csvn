@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class KafkaActionHandler implements KafkaActionListener {
 
     csvnUI ui;
-    Map<String, ScreenStreamerAlt> streamers = new HashMap<String, ScreenStreamerAlt>();
+    Map<String, ScreenStreamer> streamers = new HashMap<String, ScreenStreamer>();
     Map<String, StreamPlayer> players = new HashMap<String, StreamPlayer>();
     Map<String, StreamRecorder> recorders = new HashMap<String, StreamRecorder>();
     Map<String, VideoStreamer> vstreamers = new HashMap<String, VideoStreamer>();
@@ -40,13 +40,13 @@ public class KafkaActionHandler implements KafkaActionListener {
                                     + (String) propertyMap.get("MULTICASTPORT")) != null) {
                                 return; // Ignore if stream already is running
                             }
-                            //ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
-                            //      (String) propertyMap.get("MULTICASTPORT"), false, ":0.0");
-                            //streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
-                            // + (String) propertyMap.get("MULTICASTPORT"), streamer);
-                            //streamer.Start();
+                            ScreenStreamer streamer = new ScreenStreamer((String) propertyMap.get("MULTICASTIP"),
+                                  (String) propertyMap.get("MULTICASTPORT"), false);
+                            streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
+                             + (String) propertyMap.get("MULTICASTPORT"), streamer);
+                            streamer.Start();
                         } else if (data.getAction().equals("STOP")) {
-                            ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                        	ScreenStreamer streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
                             if (streamer != null) {
                                 streamer.Stop();
@@ -90,7 +90,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                                     StreamRecorder recorder = new StreamRecorder((String) propertyMap.get("MULTICASTIP"),
                                             (String) propertyMap.get("MULTICASTPORT"), "/var/tmp", (String) propertyMap.get("FROM"),
                                             (String) propertyMap.get("NAME"), (String) propertyMap.get("PRIORITY"),
-                                            Long.parseLong((String) propertyMap.get("PERIOD")) * 60 * 1000);
+                                            Long.parseLong((String) propertyMap.get("PERIOD")) * 60 * 1000 * 1000);
                                     recorders.put((String) propertyMap.get("MULTICASTIP") + ":"
                                             + (String) propertyMap.get("MULTICASTPORT"), recorder);
                                     recorder.Start();
@@ -146,8 +146,8 @@ public class KafkaActionHandler implements KafkaActionListener {
                             Runnable runnable = () -> { // FFMpeg Thread
                                 try {
 
-                                    ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
-                                            (String) propertyMap.get("MULTICASTPORT"), false, ":0.0");
+                                    ScreenStreamer streamer = new ScreenStreamer((String) propertyMap.get("MULTICASTIP"),
+                                            (String) propertyMap.get("MULTICASTPORT"), false);
                                     streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
                                             + (String) propertyMap.get("MULTICASTPORT"), streamer);
                                     streamer.Start();
@@ -159,7 +159,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                             t.start();
                         } else if (data.getAction().equals("STOP")) {
                             Runnable runnable = () -> {
-                                ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                            	ScreenStreamer streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                         + (String) propertyMap.get("MULTICASTPORT"));
                                 if (streamer != null) {
                                     streamer.Stop();
@@ -172,7 +172,6 @@ public class KafkaActionHandler implements KafkaActionListener {
 
                         }
                     }
-                    System.out.println("Exitted the loop.");
                     break;
 
                 case "REPLAY":

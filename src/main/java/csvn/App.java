@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegLogCallback;
+import org.freedesktop.gstreamer.Gst;
 
 import csvn.pubsub.ActionConsumer;
 
@@ -15,6 +16,7 @@ public class App {
     
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
         //SERVER CHECK
+    	if(Gst.isInitialized()) Gst.deinit();
         if(Util.DetectIfServer()){
             System.out.println("ok server");
             ServerManager.main(args);

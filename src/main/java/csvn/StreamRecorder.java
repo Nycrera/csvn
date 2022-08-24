@@ -11,6 +11,7 @@ import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
+import org.threeten.bp.Duration;
 
 /**
  * <p>
@@ -63,7 +64,6 @@ public class StreamRecorder {
 		this.SourceName = sourcename;
 		this.Priority = priority;
 		this.Period = periodUs;
-
 		Grabber = new FFmpegFrameGrabber("rtp://" + ipaddress + ":" + port);
 		Grabber.setOption("protocol_whitelist", "rtp,udp,file,crypto");
 
