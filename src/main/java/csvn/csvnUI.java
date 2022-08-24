@@ -65,7 +65,9 @@ public class csvnUI extends JFrame {
     private JButton mainbtn9;
     static JButton[] statusencoderbutton;
     static JButton[] statusbutton;
+    static JLabel[] statuslabel;
     private JLabel mainlbl1;
+    
     Color dpanel = new Color(170, 170, 170);
     Color dspanel = new Color(140, 140, 140);
     Color dcomponent = new Color(130, 130, 130);
@@ -659,7 +661,7 @@ public class csvnUI extends JFrame {
                 dstpanel.setVisible(false);
                 sttngpanel.setVisible(false);
                 statuspanel.setVisible(false);
-                File folder = new File("C:\\Users\\Taha\\workspace\\staj1\\src\\staj1");
+                File folder = new File("/var/tmp/videos/");
                 File[] filelist = folder.listFiles();
 
                 for (int l = modelrply.getRowCount() - 1; l >= 0; l--) {
@@ -674,7 +676,7 @@ public class csvnUI extends JFrame {
 
         rplybtn_2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                File folder2 = new File("C:\\Users\\Taha\\workspace\\staj1\\src\\staj1");
+                File folder2 = new File("/var/tmp/videos/");
                 File[] filelist2 = folder2.listFiles();
 
                 rplytxt.setText(null);
@@ -693,7 +695,7 @@ public class csvnUI extends JFrame {
         rplybtn_1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String text = rplytxt.getText();
-                File folder3 = new File("C:\\Users\\Taha\\workspace\\staj1\\src\\staj1");
+                File folder3 = new File("/var/tmp/videos/");
                 File[] filelist3 = folder3.listFiles();
                 for (int l = modelrply.getRowCount() - 1; l >= 0; l--) {
                     modelrply.removeRow(l);
@@ -709,20 +711,29 @@ public class csvnUI extends JFrame {
 
         dstbtn1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
-                modeldst.addRow(new Object[]{
-                    dstcombo1.getSelectedItem().toString(),
-                    "        >>>>",
-                    dstcombo2.getSelectedItem().toString()});
-                Map<String,String> properties = new HashMap<String,String>();
-                properties.put("FROM", dstcombo1.getSelectedItem().toString());
-                properties.put("TO", dstcombo2.getSelectedItem().toString());
-                properties.put("MULTICASTIP", "127.0.0.1");
-                properties.put("MULTICASTPORT", "1234");
-                try{
-                ActionProducer.Send("STREAM","START", properties);
-                } catch (Exception ex) {
-                    Logger.getLogger(csvnUI.class.getName()).log(Level.SEVERE, null, ex);
+                int i = 0;
+                if(dsttable.getRowCount()>0)
+                for(i=0;i<dsttable.getRowCount();i++) {
+                    if(dstcombo1.getSelectedItem().toString().equals(dsttable.getValueAt(i, 0)) && dstcombo2.getSelectedItem().toString().equals(dsttable.getValueAt(i, 2))) {
+                        break;
+                    }
+                }
+
+                if(i == dsttable.getRowCount()) {
+                         modeldst.addRow(new Object[]{
+                                    dstcombo1.getSelectedItem().toString(),
+                                    "        >>>>",
+                                    dstcombo2.getSelectedItem().toString()});
+                         Map<String,String> properties = new HashMap<String,String>();
+                         properties.put("FROM", dstcombo1.getSelectedItem().toString());
+                         properties.put("TO", dstcombo2.getSelectedItem().toString());
+                         properties.put("MULTICASTIP", "127.0.0.1");
+                         properties.put("MULTICASTPORT", "1234");
+                         try{
+                         ActionProducer.Send("STREAM","START", properties);
+                         } catch (Exception ex) {
+                             Logger.getLogger(csvnUI.class.getName()).log(Level.SEVERE, null, ex);
+                         }
                 }
             }
         });
@@ -741,13 +752,23 @@ public class csvnUI extends JFrame {
 
         dstbtn2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                modeldst.removeRow(dsttable.getSelectedRow());
+            	Map<String,String> properties = new HashMap<String,String>();
+            	int rownum = dsttable.getSelectedRow();
+
+            	properties.put("FROM", dsttable.getValueAt(rownum, 0).toString());
+            	properties.put("TO", dsttable.getValueAt(rownum, 2).toString());
+            	properties.put("MULTICASTIP", "127.0.0.1");
+            	properties.put("MULTICASTPORT", "1234");
+            	try {
+            	ActionProducer.Send("STREAM","STOP", properties);
+                modeldst.removeRow(rownum);
+            	}catch(Exception err) {
+            		err.printStackTrace();
+            	}
             }
         });
         mainbtn5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                {
                     try {
                         File xmlfile1 = new File("XMLFile.xml");
                         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -757,29 +778,37 @@ public class csvnUI extends JFrame {
                         NodeList nodeList = xmldoc.getElementsByTagName("module");
                         statusencoderbutton = new JButton[nodeList.getLength()];
                         statusbutton = new JButton[nodeList.getLength()];
-
+                        statuslabel = new JLabel[nodeList.getLength()];
+                        int sayac1 = 0;
+                        int sayac2 = 0;
                         for (int i = 0; i < nodeList.getLength(); i++) {
+                        	
                             Node node = nodeList.item(i);
                             Element eElement = (Element) node;
+                            
                             statusencoderbutton[i] = new JButton(eElement.getElementsByTagName("id").item(0).getTextContent());
-                            statusencoderbutton[i].setBounds(40, 40 + i * 60, 100, 50);
+                            statusencoderbutton[i].setBounds(40 + sayac2 * 420, 40 + sayac1 * 60, 100, 50);
                             statusencoderbutton[i].setBackground(dcomponent);
                             statuspanel.add(statusencoderbutton[i]);
-                            statusbutton[i] = new JButton();
-                            statusbutton[i].setBounds(150, 40 + i * 60, 100, 50);
+                            statusbutton[i] = new JButton("ENCODER/DECODER");
+                            statusbutton[i].setBounds(190 + sayac2 * 420, 40 + sayac1 * 60, 200, 50);
                             statusbutton[i].setBackground(dcomponent);
                             statuspanel.add(statusbutton[i]);
+                            statuslabel[i] = new JLabel("----");
+                            statuslabel[i].setBounds(150 + sayac2 * 420, 40 + sayac1 * 60, 30, 50);
+                            statuslabel[i].setFont(new Font("Times New Roman", Font.PLAIN, 14));
+                            statuslabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+                            statuspanel.add(statuslabel[i]);
                             statuspanel.repaint();
+                            sayac1++;
+                            if(sayac1>5) {
+                            	sayac1= 0;
+                            	sayac2= 1;
+                            }
                         }
-                        List<Boolean> liste = statusModel.getSystemLiveStatus();
-                        for (int i = 0; i < liste.size(); i++) {
-
-                            statusencoderbutton[i].setBackground(liste.get(i) ? Color.GREEN : Color.RED);
-                            statusencoderbutton[i].repaint();
-                        }
+                    
                     } catch (Exception f) {
                     }
-                }
             }
         });
         rcrdtable.addMouseListener(new MouseAdapter() {
@@ -796,7 +825,52 @@ public class csvnUI extends JFrame {
 
             }
         });
-
+        
+        rcrdbtn1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            
+            }
+        });
+        
+        rcrdbtn2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            
+            }
+        });
+       
+        rplybtn_4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	String destination = rplycombo.getSelectedItem().toString();
+            	String vidFileName = rplytable.getValueAt(rplytable.getSelectedRow(),0).toString();
+            	Map<String,String> properties = new HashMap<String,String>();
+                properties.put("FILE", vidFileName);
+                properties.put("TO", destination);
+                properties.put("MULTICASTIP", "127.0.0.1");
+                properties.put("MULTICASTPORT", "1234");
+                try {
+                	ActionProducer.Send("REPLAY","START", properties);
+                }catch(Exception err){
+                	err.printStackTrace();
+                }
+            }
+        });
+        
+        rplybtn_5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	String destination = rplycombo.getSelectedItem().toString();
+            	String vidFileName = rplytable.getValueAt(rplytable.getSelectedRow(),0).toString();
+            	Map<String,String> properties = new HashMap<String,String>();
+                properties.put("FILE", vidFileName);
+                properties.put("TO", destination);
+                properties.put("MULTICASTIP", "127.0.0.1");
+                properties.put("MULTICASTPORT", "1234");
+                try {
+                	ActionProducer.Send("REPLAY","STOP", properties);
+                }catch(Exception err){
+                	err.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
