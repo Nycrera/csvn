@@ -20,7 +20,7 @@ public class ScreenStreamerAlt {
 	public int DisplayId = 0;
 	public int FPS = 30;
 	boolean running = false;
-
+	Thread t;
 	ScheduledThreadPoolExecutor AudioThread;
 
 	/**
@@ -112,7 +112,7 @@ public class ScreenStreamerAlt {
 			}
 		}, 0, (long) 1000 / FPS, TimeUnit.MILLISECONDS);
 */
-		Thread t = new Thread(runnable);
+		t = new Thread(runnable);
 		t.start();
 	}
 
@@ -128,6 +128,9 @@ public class ScreenStreamerAlt {
 		//	audioGrabber.close();
 			recorder.stop();
 			recorder.close();
+			if(t.isAlive()) {
+				t.stop(); // Unsafe stop, last resort, shouldn't even need to execute anyway.
+			}
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
 		}

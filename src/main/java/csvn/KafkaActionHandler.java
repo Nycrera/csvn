@@ -40,17 +40,14 @@ public class KafkaActionHandler implements KafkaActionListener {
 						streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"), streamer);
 						streamer.Start();
-                                                if(Util.DetectIfServer()){
-                                                    ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", ""))-1,true );
-                                                }
 					} else if (data.getAction().equals("STOP")) {
 						ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
-						if (streamer != null)
+						if (streamer != null) {
 							streamer.Stop();
-                                                if(Util.DetectIfServer()){
-                                                    ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", ""))-1,false );
-                                                }
+							streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+								+ (String) propertyMap.get("MULTICASTPORT"));
+						}
 					}
 				}
 				if (propertyMap.get("TO").equals(opconID)) {
@@ -66,8 +63,11 @@ public class KafkaActionHandler implements KafkaActionListener {
 					} else if (data.getAction().equals("STOP")) {
 						StreamPlayer player = players.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
-						if (player != null)
+						if (player != null) {
 							player.Stop();
+							players.remove((String) propertyMap.get("MULTICASTIP") + ":"
+									+ (String) propertyMap.get("MULTICASTPORT"));
+						}
 					}
 				}
 				break;
@@ -87,8 +87,11 @@ public class KafkaActionHandler implements KafkaActionListener {
 					} else if (data.getAction().equals("STOP")) {
 						StreamRecorder recorder = recorders.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
-						if (recorder != null)
+						if (recorder != null) {
 							recorder.Stop();
+							recorders.remove((String) propertyMap.get("MULTICASTIP") + ":"
+								+ (String) propertyMap.get("MULTICASTPORT"));
+						}
 					}
 				}
 				if (propertyMap.get("FROM").equals(opconID)) { // Need to take action, I am the referenced client
@@ -104,8 +107,11 @@ public class KafkaActionHandler implements KafkaActionListener {
 					} else if (data.getAction().equals("STOP")) {
 						ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
-						if (streamer != null)
+						if (streamer != null) {
 							streamer.Stop();
+							streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+								+ (String) propertyMap.get("MULTICASTPORT"));
+						}
 					}
 				}
 				break;
@@ -123,8 +129,11 @@ public class KafkaActionHandler implements KafkaActionListener {
 					} else if (data.getAction().equals("STOP")) {
 						VideoStreamer vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
-						if (vstreamer != null)
+						if (vstreamer != null) {
 							vstreamer.Stop();
+							vstreamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+								+ (String) propertyMap.get("MULTICASTPORT"));
+						}
 					} else if(data.getAction().equals("SEEK")) {
 						VideoStreamer vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
@@ -146,8 +155,11 @@ public class KafkaActionHandler implements KafkaActionListener {
 					} else if (data.getAction().equals("STOP")) {
 						StreamPlayer player = players.get((String) propertyMap.get("MULTICASTIP") + ":"
 								+ (String) propertyMap.get("MULTICASTPORT"));
-						if (player != null)
+						if (player != null) {
 							player.Stop();
+							players.remove((String) propertyMap.get("MULTICASTIP") + ":"
+								+ (String) propertyMap.get("MULTICASTPORT"));
+						}
 					}
 				}
 				break;
