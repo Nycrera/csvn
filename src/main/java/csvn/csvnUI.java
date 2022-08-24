@@ -1,6 +1,7 @@
 package csvn;
 
 import core.kafka.communication.types.Status;
+import core.models.ObjectConverter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -51,13 +52,15 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class csvnUI extends JFrame {
 
     private JPanel contentPane;
     private JTextField rcrdtxt;
     private JTextField rplytxt;
-
+    private static Status statusModel;
     private JButton mainbtn9;
     static JButton[] statusencoderbutton;
     static JButton[] statusbutton;
@@ -68,8 +71,10 @@ public class csvnUI extends JFrame {
 
     public void guncelle(Status status, JButton btnvoid) {
         try {
+            statusModel = status;
             long totalsize = Long.valueOf(status.getDiskSize().toString());
             long usabledisk = Long.valueOf(status.getUsableDiskPartition().toString());
+            
             if (nonNull(totalsize) && nonNull(usabledisk)) {
                 long a = (100 * (totalsize - usabledisk) / totalsize);
                 if (a > 80) {
@@ -82,7 +87,8 @@ public class csvnUI extends JFrame {
                 }
                 btnvoid.setText("Storage %" + a);
                 btnvoid.repaint();
-                System.out.println(a);
+
+                //System.out.println(a);
             } else {
 
                 mainbtn9.setBackground(Color.RED);
@@ -709,6 +715,18 @@ public class csvnUI extends JFrame {
                     dstcombo2.getSelectedItem().toString()});
             }
         });
+        ScheduledThreadPoolExecutor statusThread = new ScheduledThreadPoolExecutor(1);
+        statusThread.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    guncelle(App.vericek(), mainbtn9);
+                } catch (java.lang.Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }, 0, 1500, TimeUnit.MILLISECONDS);
 
         dstbtn2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -742,22 +760,31 @@ public class csvnUI extends JFrame {
                             statuspanel.add(statusbutton[i]);
                             statuspanel.repaint();
                         }
+                        List<Boolean> liste = statusModel.getSystemLiveStatus();
+                        for (int i = 0; i < liste.size(); i++) {
+
+                            statusencoderbutton[i].setBackground(liste.get(i) ? Color.GREEN : Color.RED);
+                            statusencoderbutton[i].repaint();
+                        }
                     } catch (Exception f) {
                     }
                 }
             }
         });
-        ScheduledThreadPoolExecutor statusThread = new ScheduledThreadPoolExecutor(1);
-        statusThread.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    guncelle(App.vericek(), mainbtn9);
-                } catch (java.lang.Exception e) {
-                    e.printStackTrace();
+        rcrdtable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                String rcrdstring = null;
+                rcrdstring = rcrdtable.getValueAt(rcrdtable.getSelectedRow(), 1).toString();
+                if (rcrdstring.equals("Available")) {
+                    rcrdbtn1.setEnabled(true);
+                    rcrdbtn2.setEnabled(false);
+                } else {
+                    rcrdbtn1.setEnabled(false);
+                    rcrdbtn2.setEnabled(true);
                 }
+
             }
-        }, 0, 1000, TimeUnit.MILLISECONDS);
+        });
 
     }
 

@@ -40,7 +40,6 @@ public class StatusProducer {
 
     }*/
     public  void publishMessage(Status status) throws InterruptedException{
-        
         try (KafkaProducer<String, Status> kafkaProducer = new KafkaProducer<String, Status>(getKafkaProducerConfig())) {
             
             

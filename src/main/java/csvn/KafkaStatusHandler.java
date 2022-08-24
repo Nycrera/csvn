@@ -22,6 +22,7 @@ public class KafkaStatusHandler  implements KafkaStatusListener{
 	}
 	
 	public void KafkaAction(Status data) {
+            
             App.status = data;
 	}
 }
