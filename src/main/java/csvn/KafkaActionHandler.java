@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import core.kafka.communication.types.Action;
 import core.kafka.communication.types.Record;
 import csvn.pubsub.ActionConsumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class KafkaActionHandler implements KafkaActionListener {
 
@@ -109,14 +111,22 @@ public class KafkaActionHandler implements KafkaActionListener {
                             ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1, rc);
 
                         } else if (data.getAction().equals("STOP")) {
-
-                            StreamRecorder recorder = recorders.get((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT"));
-                            if (recorder != null) {
-                                recorder.Stop();
-                                recorders.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                            Runnable runnable = () -> {
+                                StreamRecorder recorder = recorders.get((String) propertyMap.get("MULTICASTIP") + ":"
                                         + (String) propertyMap.get("MULTICASTPORT"));
-                            }
+                                if (recorder != null) {
+                                    try {
+                                        recorder.Stop();
+                                    } catch (Exception ex) {
+                                        Logger.getLogger(KafkaActionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    recorders.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                            + (String) propertyMap.get("MULTICASTPORT"));
+                                }
+                            };
+                            Thread t = new Thread(runnable);
+                            t.start();
+
                             Record rc = ServerManager.consoleRecordStatus.get(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1);
                             System.out.println(rc.getSource());
 
@@ -136,25 +146,30 @@ public class KafkaActionHandler implements KafkaActionListener {
                             Runnable runnable = () -> { // FFMpeg Thread
                                 try {
 
-                            ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
-                                    (String) propertyMap.get("MULTICASTPORT"), false, ":0.0");
-                            streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT"), streamer);
-                            streamer.Start();
-                                }catch(Exception err) {
-                                	err.printStackTrace();
+                                    ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
+                                            (String) propertyMap.get("MULTICASTPORT"), false, ":0.0");
+                                    streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
+                                            + (String) propertyMap.get("MULTICASTPORT"), streamer);
+                                    streamer.Start();
+                                } catch (Exception err) {
+                                    err.printStackTrace();
                                 }
                             };
                             Thread t = new Thread(runnable);
                             t.start();
                         } else if (data.getAction().equals("STOP")) {
-                            ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT"));
-                            if (streamer != null) {
-                                streamer.Stop();
-                                streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                            Runnable runnable = () -> {
+                                ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                         + (String) propertyMap.get("MULTICASTPORT"));
-                            }
+                                if (streamer != null) {
+                                    streamer.Stop();
+                                    streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                            + (String) propertyMap.get("MULTICASTPORT"));
+                                }
+                            };
+                            Thread t = new Thread(runnable);
+                            t.start();
+
                         }
                     }
                     System.out.println("Exitted the loop.");
