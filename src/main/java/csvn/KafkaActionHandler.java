@@ -38,11 +38,11 @@ public class KafkaActionHandler implements KafkaActionListener {
                                     + (String) propertyMap.get("MULTICASTPORT")) != null) {
                                 return; // Ignore if stream already is running
                             }
-                            ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
-                                    (String) propertyMap.get("MULTICASTPORT"), false, ":0.0");
-                            streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT"), streamer);
-                            streamer.Start();
+                            //ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
+                            //      (String) propertyMap.get("MULTICASTPORT"), false, ":0.0");
+                            //streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
+                            // + (String) propertyMap.get("MULTICASTPORT"), streamer);
+                            //streamer.Start();
                         } else if (data.getAction().equals("STOP")) {
                             ScreenStreamerAlt streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
@@ -82,21 +82,34 @@ public class KafkaActionHandler implements KafkaActionListener {
                                     + (String) propertyMap.get("MULTICASTPORT")) != null) {
                                 return; // Ignore if recording already is running
                             }
-                            StreamRecorder recorder = new StreamRecorder((String) propertyMap.get("MULTICASTIP"),
-                                    (String) propertyMap.get("MULTICASTPORT"), "/var/tmp", (String) propertyMap.get("FROM"),
-                                    (String) propertyMap.get("NAME"), (String) propertyMap.get("PRIORITY"),
-                                    Long.parseLong((String) propertyMap.get("PERIOD"))*60*1000);
-                            recorders.put((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT"), recorder);
-                            recorder.Start();
+                            Runnable runnable = () -> { // FFMpeg Thread
+                                try {
+
+                                    StreamRecorder recorder = new StreamRecorder((String) propertyMap.get("MULTICASTIP"),
+                                            (String) propertyMap.get("MULTICASTPORT"), "/var/tmp", (String) propertyMap.get("FROM"),
+                                            (String) propertyMap.get("NAME"), (String) propertyMap.get("PRIORITY"),
+                                            Long.parseLong((String) propertyMap.get("PERIOD")) * 60 * 1000);
+                                    recorders.put((String) propertyMap.get("MULTICASTIP") + ":"
+                                            + (String) propertyMap.get("MULTICASTPORT"), recorder);
+                                    recorder.Start();
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            };
+
+                            Thread t = new Thread(runnable);
+                            t.start();
+
                             Record rc = ServerManager.consoleRecordStatus.get(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1);
                             rc.setStartTime(data.getActionDate());
                             rc.setName(String.valueOf(propertyMap.get("NAME")));
                             rc.setStatus(false);
-                            ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1,rc);
-                            
+
+                            ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1, rc);
+
                         } else if (data.getAction().equals("STOP")) {
-                            
+
                             StreamRecorder recorder = recorders.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
                             if (recorder != null) {
@@ -105,11 +118,13 @@ public class KafkaActionHandler implements KafkaActionListener {
                                         + (String) propertyMap.get("MULTICASTPORT"));
                             }
                             Record rc = ServerManager.consoleRecordStatus.get(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1);
-                            rc.setStartTime("");
+                            System.out.println(rc.getSource());
+
+                            rc.setStartTime(null);
                             rc.setName("");
                             rc.setStatus(true);
-                            ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1,rc);
-                            
+                            ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1, rc);
+
                         }
                     }
                     if (propertyMap.get("FROM").equals(opconID)) { // Need to take action, I am the referenced client
@@ -134,6 +149,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                         }
                     }
                     break;
+
                 case "REPLAY":
                     if (Util.DetectIfServer()) {
                         if (data.getAction().equals("START")) {

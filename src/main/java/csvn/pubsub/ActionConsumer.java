@@ -38,7 +38,7 @@ public class ActionConsumer {
             try {
                 ConsumerRecords<String, Action> actionRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 actionRecords.forEach(record -> {
-                    //System.out.println(record.value().toString());
+                    System.out.println(record.value().toString());
                     // Something happened
                     KafkaListener.KafkaAction(record.value());
                 });

@@ -839,7 +839,7 @@ public class csvnUI extends JFrame {
                     rcrdbtn1.setEnabled(true);
                     rcrdbtn2.setEnabled(false);
                 } else {
-                    rcrdbtn1.setEnabled(false);
+                    rcrdbtn1.setEnabled(true);
                     rcrdbtn2.setEnabled(true);
                 }
 
@@ -858,7 +858,7 @@ public class csvnUI extends JFrame {
                 properties.put("PRIORITY","NORMAL");
                 properties.put("NAME",rcrdtxt.getText());
                 try {
-                    ActionProducer.Send("RECORD", "STOP", properties);
+                    ActionProducer.Send("RECORD", "START", properties);
                     
                 } catch (Exception err) {
                     err.printStackTrace();
@@ -879,6 +879,7 @@ public class csvnUI extends JFrame {
                 properties.put("NAME",rcrdtable.getValueAt(rownum, 2).toString());
                 try {
                     ActionProducer.Send("RECORD", "STOP", properties);
+                    
                     
                 } catch (Exception err) {
                     err.printStackTrace();
