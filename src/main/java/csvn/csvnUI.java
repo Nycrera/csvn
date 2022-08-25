@@ -178,7 +178,7 @@ public class csvnUI extends JFrame {
         JToggleButton maintglbtn = new JToggleButton("");
         Image imgmoon = new ImageIcon(this.getClass().getResource("/moon.png")).getImage();
         Image imgsun = new ImageIcon(this.getClass().getResource("/sun.png")).getImage();
-        maintglbtn.setIcon(new ImageIcon(imgmoon));
+        maintglbtn.setIcon(new ImageIcon(imgsun));
         maintglbtn.setBounds(751, 3, 73, 32);
         uppanel.add(maintglbtn);
 
@@ -484,14 +484,14 @@ public class csvnUI extends JFrame {
         maintglbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (maintglbtn.isSelected() == true) {
-                    maintglbtn.setIcon(new ImageIcon(imgsun));
+                    maintglbtn.setIcon(new ImageIcon(imgmoon));
 
                     dpanel = Colors.lightpanel;
                     dspanel = Colors.lightsubpanel;
                     dcomponent = Colors.lightcomponents;
 
                 } else {
-                    maintglbtn.setIcon(new ImageIcon(imgmoon));
+                    maintglbtn.setIcon(new ImageIcon(imgsun));
                     dpanel = Colors.darkpanel;
                     dspanel = Colors.darksubpanel;
                     dcomponent = Colors.darkcomponents;
@@ -747,6 +747,7 @@ public class csvnUI extends JFrame {
             @Override
             public void run() {
                 try {
+                    boolean serverstatus = false;
                     if (PingUtil.serverPingController()) {
 
                         mainbtn7.setBackground(Color.GREEN);
@@ -755,31 +756,29 @@ public class csvnUI extends JFrame {
                         mainbtn7.setBackground(Color.RED);
                         mainbtn7.setForeground(Color.WHITE);
                     }
-                    
+
                     guncelle(App.vericek(), mainbtn9);
-                    boolean serverstatus = false;
-                    
+
                     try {
                         List<Record> liste = statusModel.getOpconRecordStatus();
-                        for (int i = 0; i < statusbutton.length; i++) {
-                            if (statusModel.getOpconPingStatus().get(i)) {
-                                statusbutton[i].setBackground(Color.GREEN);
-                                statusbutton[i].setForeground(Color.BLACK);
-                                serverstatus = true;
-                            } else {
-                                statusbutton[i].setBackground(Color.RED);
-                                statusbutton[i].setForeground(Color.WHITE);
+                        List<Boolean> durumliste = statusModel.getOpconPingStatus();
+                        for (int i = 0; i < liste.size(); i++) {
+                            modelrcrd.setValueAt(liste.get(i).getSource(), i, 0);
+                            modelrcrd.setValueAt(liste.get(i).getStatus() ? "Available" : "Recording", i, 1);
+                            modelrcrd.setValueAt(liste.get(i).getName(), i, 2);
+                            modelrcrd.setValueAt(nonNull(liste.get(i).getStartTime()) ? DateConverter.longToStringDate(Long.valueOf(String.valueOf(liste.get(i).getStartTime()))) : "", i, 3);
+                            modelrcrd.setValueAt(durumliste.get(i) ? "Connected" : "Not Connected", i, 4);
 
+                        }
+                        for (int i = 0; i < statusModel.getOpconPingStatus().size(); i++) {
+                            if (statusModel.getOpconPingStatus().get(i)) {
+                                serverstatus = true;
                             }
                         }
-                        for (int i = 0; i < statusencoderbutton.length; i++) {
+                        for (int i = 0; i < statusModel.getCoderPingStatus().size(); i++) {
                             if (statusModel.getCoderPingStatus().get(i)) {
-                                statusencoderbutton[i].setBackground(Color.GREEN);
-                                statusencoderbutton[i].setForeground(Color.BLACK);
                                 serverstatus = true;
-                            } else {
-                                statusencoderbutton[i].setBackground(Color.RED);
-                                statusencoderbutton[i].setForeground(Color.WHITE);
+
                             }
 
                         }
@@ -791,21 +790,16 @@ public class csvnUI extends JFrame {
                             mainbtn5.setBackground(Color.RED);
                             mainbtn5.setForeground(Color.WHITE);
                         }
-                        List<Boolean> durumliste = statusModel.getOpconPingStatus();
-                        for (int i = 0; i < liste.size(); i++) {
-                            modelrcrd.setValueAt(liste.get(i).getSource(), i, 0);
-                            modelrcrd.setValueAt(liste.get(i).getStatus() ? "Available" : "Recording", i, 1);
-                            modelrcrd.setValueAt(liste.get(i).getName(), i, 2);
-                            modelrcrd.setValueAt(nonNull(liste.get(i).getStartTime()) ? DateConverter.longToStringDate(Long.valueOf(String.valueOf(liste.get(i).getStartTime()))) : "", i, 3);
-                            modelrcrd.setValueAt(durumliste.get(i) ? "Connected" : "Not Connected", i, 4);
-
-                        }
-                        
 
                     } catch (Exception f) {
 
-                        mainbtn5.setBackground(Color.RED);
-                        mainbtn5.setForeground(Color.WHITE);
+                        if (serverstatus) {
+                            mainbtn5.setBackground(Color.GREEN);
+                            mainbtn5.setForeground(Color.BLACK);
+                        } else {
+                            mainbtn5.setBackground(Color.RED);
+                            mainbtn5.setForeground(Color.WHITE);
+                        }
                     }
                 } catch (java.lang.Exception e) {
                     mainbtn5.setBackground(Color.RED);
@@ -865,12 +859,35 @@ public class csvnUI extends JFrame {
                         statuslabel[i].setFont(new Font("Times New Roman", Font.PLAIN, 14));
                         statuslabel[i].setHorizontalAlignment(SwingConstants.CENTER);
                         statuspanel.add(statuslabel[i]);
+
                         statuspanel.repaint();
                         sayac1++;
                         if (sayac1 > 5) {
                             sayac1 = 0;
                             sayac2 = 1;
                         }
+                    }
+                    for (int k = 0; k < statusbutton.length; k++) {
+                        if (statusModel.getOpconPingStatus().get(k)) {
+                            statusbutton[k].setBackground(Color.GREEN);
+                            statusbutton[k].setForeground(Color.BLACK);
+
+                        } else {
+                            statusbutton[k].setBackground(Color.RED);
+                            statusbutton[k].setForeground(Color.WHITE);
+
+                        }
+                    }
+                    for (int k = 0; k < statusencoderbutton.length; k++) {
+                        if (statusModel.getCoderPingStatus().get(k)) {
+                            statusencoderbutton[k].setBackground(Color.GREEN);
+                            statusencoderbutton[k].setForeground(Color.BLACK);
+
+                        } else {
+                            statusencoderbutton[k].setBackground(Color.RED);
+                            statusencoderbutton[k].setForeground(Color.WHITE);
+                        }
+
                     }
 
                 } catch (Exception f) {
