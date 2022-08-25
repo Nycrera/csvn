@@ -95,7 +95,7 @@ public class StreamRecorder {
 		Grabber.stop();
 		Grabber.close();
 		Recorder.stop();
-		Recorder.close();
+		//Recorder.close(); -> this is unsafe as it kills the recorder prematurely, without calculating moov atoms.
 	}
 
 	private void RunFFMpegThread() {
