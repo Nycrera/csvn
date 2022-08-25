@@ -10,8 +10,8 @@ package core.kafka.connection;
  */
 public interface IAppConfigs {
     String BOOTSTAP_SERVER="localhost:9092";
-    String APPLICATION_ID_CONFIG="new-config";
-    String STATUS_TOPIC="statussss";
-    String ACTION_TOPIC="actionnn";
+    String APPLICATION_ID_CONFIG="ndconfig";
+    String STATUS_TOPIC="stastussss";
+    String ACTION_TOPIC="acstionnn";
     String SENDER_ID="client_1";
 }

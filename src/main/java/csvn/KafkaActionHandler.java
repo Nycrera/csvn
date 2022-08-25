@@ -109,7 +109,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                             rc.setStatus(false);
 
                             ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1, rc);
-
+                           
                         } else if (data.getAction().equals("STOP")) {
                             Runnable runnable = () -> {
                                 StreamRecorder recorder = recorders.get((String) propertyMap.get("MULTICASTIP") + ":"

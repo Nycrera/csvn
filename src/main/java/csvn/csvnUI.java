@@ -763,12 +763,35 @@ public class csvnUI extends JFrame {
                             modelrcrd.setValueAt(durumliste.get(i) ? "Connected" : "Not Connected", i, 4);
 
                         }
+                        boolean serverstatus = false;
                         for (int i = 0; i < statusbutton.length; i++) {
-                            statusbutton[i].setBackground(statusModel.getOpconPingStatus().get(i) ? Color.GREEN : Color.RED);
+                            if(statusModel.getOpconPingStatus().get(i)){
+                                statusbutton[i].setBackground(Color.GREEN);
+                                serverstatus = true;
+                            }
+                            else{
+                                statusbutton[i].setBackground(Color.RED);
+                                
+                            }
                         }
                         for (int i = 0; i < statusencoderbutton.length; i++) {
-                            statusencoderbutton[i].setBackground(statusModel.getCoderPingStatus().get(i) ? Color.GREEN : Color.RED);
+                            if(statusModel.getCoderPingStatus().get(i)){
+                                statusencoderbutton[i].setBackground(Color.GREEN);
+                                serverstatus = true;
+                            }
+                            else{
+                                statusencoderbutton[i].setBackground(Color.RED);
+                            }
+                            
                         }
+                        
+                        if(serverstatus){
+                            mainbtn5.setBackground(Color.GREEN);
+                        }
+                        else{
+                            mainbtn5.setBackground(Color.RED);
+                        }
+                        
 
 
                     } catch (Exception f) {
