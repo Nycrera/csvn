@@ -765,36 +765,33 @@ public class csvnUI extends JFrame {
                         }
                         boolean serverstatus = false;
                         for (int i = 0; i < statusbutton.length; i++) {
-                            if(statusModel.getOpconPingStatus().get(i)){
+                            if (statusModel.getOpconPingStatus().get(i)) {
                                 statusbutton[i].setBackground(Color.GREEN);
                                 serverstatus = true;
-                            }
-                            else{
+                            } else {
                                 statusbutton[i].setBackground(Color.RED);
-                                
+
                             }
                         }
                         for (int i = 0; i < statusencoderbutton.length; i++) {
-                            if(statusModel.getCoderPingStatus().get(i)){
+                            if (statusModel.getCoderPingStatus().get(i)) {
                                 statusencoderbutton[i].setBackground(Color.GREEN);
                                 serverstatus = true;
-                            }
-                            else{
+                            } else {
                                 statusencoderbutton[i].setBackground(Color.RED);
                             }
-                            
+
                         }
-                        
-                        if(serverstatus){
+
+                        if (serverstatus && nonNull(statusModel)) {
                             mainbtn5.setBackground(Color.GREEN);
-                        }
-                        else{
+                        } else {
                             mainbtn5.setBackground(Color.RED);
                         }
-                        
-
 
                     } catch (Exception f) {
+                        
+                        mainbtn5.setBackground(Color.RED);
                     }
                 } catch (java.lang.Exception e) {
                     e.printStackTrace();
