@@ -36,7 +36,7 @@ public class ScreenStreamer {
 		}
 		if (!enableVAAPI) {
 			pipeline = (Pipeline) Gst
-					.parseLaunch("ximagesrc ! video/x-raw,framerate=30/1 ! videoconvert ! x264enc "
+					.parseLaunch("ximagesrc ! video/x-raw,framerate=30/1 ! videoconvert ! x264enc ! video/x-h264,profile=baseline !"
 							+ " mpegtsmux name=m ! rtpmp2tpay ! udpsink host="
 							+ ipaddress + " port=" + port
 							+ " sync=false");

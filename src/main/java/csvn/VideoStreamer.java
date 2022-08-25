@@ -33,9 +33,10 @@ public class VideoStreamer {
 			pipeline = (Pipeline) Gst.parseLaunch("filesrc name=fsrc ! decodebin ! x264enc ! "
 					+ "video/x-h264,profile=baseline ! h264parse config-interval=-1 ! mpegtsmux name=m ! rtpmp2tpay ! udpsink host="
 					+ clientip + " port=" + clientport);
-		} else {
+		} else {/*
 			pipeline = (Pipeline) Gst.parseLaunch(
 					"mpegtsmux name=mx ! rtpmp2tpay ! udpsink host="+ clientip +" port="+ clientport +" filesrc name=fsrc ! qtdemux name=dmx dmx. ! queue ! aacparse ! faad ! audioresample ! audioconvert ! fdkaacenc ! mx. dmx. ! queue ! vaapih264dec ! vaapih264enc bitrate=1000 quality-level=2 ! queue ! h264parse config-interval=-1 ! mx.");
+		*/ throw new Exception("Not implemented.");
 		}
 		Element fileSource = pipeline.getElementByName("fsrc");
 		fileSource.set("location", filename);

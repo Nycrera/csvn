@@ -301,6 +301,27 @@ public class Util {
             return list;
         }
     }
+    
+    public static Map<String,String> getVideoConfig(){
+    	Map<String,String> vc = new HashMap<String,String>();
+    	try {
+            File xmlfile = new File("Videoconfig.xml");
+            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dbbuild = dbfac.newDocumentBuilder();
+            Document xmldoc = dbbuild.parse(xmlfile);
+            xmldoc.getDocumentElement().normalize();
+            Element ssconfig = (Element) xmldoc.getElementsByTagName("screenstreamer").item(0);
+            Element vsconfig = (Element) xmldoc.getElementsByTagName("videostreamer").item(0);
+            
+            vc.put("ssmethod", ssconfig.getElementsByTagName("method").item(0).getTextContent());
+            vc.put("ssinptstr", ssconfig.getElementsByTagName("inputstring").item(0).getTextContent());
+            vc.put("ssvaapi", ssconfig.getElementsByTagName("vaapi").item(0).getTextContent());
+            vc.put("vsmethod", vsconfig.getElementsByTagName("method").item(0).getTextContent());
+            }catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	return vc;
+    }
 
     public static List<String> deneme() {
         //Creating a File object for directory

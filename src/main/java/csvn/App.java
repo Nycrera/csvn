@@ -7,6 +7,7 @@ import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegLogCallback;
 import org.freedesktop.gstreamer.Gst;
+import org.freedesktop.gstreamer.glib.GLib;
 
 import csvn.pubsub.ActionConsumer;
 
@@ -21,6 +22,7 @@ public class App {
             System.out.println("ok server");
             ServerManager.main(args);
         }
+        GLib.setEnv("GST_DEBUG", "4", true);
         
         FFmpegLogCallback.setLevel(avutil.AV_LOG_INFO);
         FFmpegLogCallback.set(); // Sets FFMpeg to direct its logs.

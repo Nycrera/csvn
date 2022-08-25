@@ -14,13 +14,17 @@ import java.util.logging.Logger;
 public class KafkaActionHandler implements KafkaActionListener {
 
     csvnUI ui;
+    Map<String, String> config;
     Map<String, ScreenStreamer> streamers = new HashMap<String, ScreenStreamer>();
+    Map<String, ScreenStreamerAlt> streamersAlt = new HashMap<String, ScreenStreamerAlt>();
     Map<String, StreamPlayer> players = new HashMap<String, StreamPlayer>();
     Map<String, StreamRecorder> recorders = new HashMap<String, StreamRecorder>();
     Map<String, VideoStreamer> vstreamers = new HashMap<String, VideoStreamer>();
+    Map<String, VideoStreamerAlt> vstreamersAlt = new HashMap<String, VideoStreamerAlt>();
 
     public KafkaActionHandler(csvnUI UI) {
         ui = UI;
+        config = Util.getVideoConfig();
         ActionConsumer ac = new ActionConsumer();
         ac.registerActionListener(this);
         ac.startConsumer();
@@ -34,27 +38,6 @@ public class KafkaActionHandler implements KafkaActionListener {
 
             switch (data.getActionName()) {
                 case "STREAM":
-                    if (propertyMap.get("FROM").equals(opconID)) {
-                        if (data.getAction().equals("START")) {
-                            if (streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT")) != null) {
-                                return; // Ignore if stream already is running
-                            }
-                            ScreenStreamer streamer = new ScreenStreamer((String) propertyMap.get("MULTICASTIP"),
-                                  (String) propertyMap.get("MULTICASTPORT"), false);
-                            streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
-                             + (String) propertyMap.get("MULTICASTPORT"), streamer);
-                            streamer.Start();
-                        } else if (data.getAction().equals("STOP")) {
-                        	ScreenStreamer streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT"));
-                            if (streamer != null) {
-                                streamer.Stop();
-                                streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
-                                        + (String) propertyMap.get("MULTICASTPORT"));
-                            }
-                        }
-                    }
                     if (propertyMap.get("TO").equals(opconID)) {
                         if (data.getAction().equals("START")) {
                             if (players.get((String) propertyMap.get("MULTICASTIP") + ":"
@@ -70,9 +53,63 @@ public class KafkaActionHandler implements KafkaActionListener {
                             StreamPlayer player = players.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
                             if (player != null) {
+                                Runnable runnable = () -> { // FFMpeg Thread
+                                    try {
                                 player.Stop();
                                 players.remove((String) propertyMap.get("MULTICASTIP") + ":"
                                         + (String) propertyMap.get("MULTICASTPORT"));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                };
+
+                                Thread t = new Thread(runnable);
+                                t.start();
+                            }
+                        }
+                    }
+                    if (propertyMap.get("FROM").equals(opconID)) {
+                        if (data.getAction().equals("START")) {
+
+                            if(config.get("ssmethod").equals("gstreamer")) {
+                                if (streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                        + (String) propertyMap.get("MULTICASTPORT")) != null) {
+                                    return; // Ignore if stream already is running
+                                }
+                            ScreenStreamer streamer = new ScreenStreamer((String) propertyMap.get("MULTICASTIP"),
+                                  (String) propertyMap.get("MULTICASTPORT"), Boolean.parseBoolean(config.get("ssvaapi")));
+                            streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
+                             + (String) propertyMap.get("MULTICASTPORT"), streamer);
+                                  streamer.Start();
+                            }else if(config.get("ssmethod").equals("ffmpeg")) {
+                                if (streamersAlt.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                        + (String) propertyMap.get("MULTICASTPORT")) != null) {
+                                    return; // Ignore if stream already is running
+                                }
+                                ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
+                                        (String) propertyMap.get("MULTICASTPORT"), Boolean.parseBoolean(config.get("ssvaapi")), config.get("ssinptstr"));
+                                  streamersAlt.put((String) propertyMap.get("MULTICASTIP") + ":"
+                                   + (String) propertyMap.get("MULTICASTPORT"), streamer);
+                                  streamer.Start();
+                            }
+                            
+                        } else if (data.getAction().equals("STOP")) {
+                            if(config.get("ssmethod").equals("gstreamer")) {
+                        	ScreenStreamer streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                    + (String) propertyMap.get("MULTICASTPORT"));
+                            if (streamer != null) {
+                                streamer.Stop();
+                                streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                        + (String) propertyMap.get("MULTICASTPORT"));
+                            }
+                            }else if(config.get("ssmethod").equals("ffmpeg")) {
+                            	ScreenStreamerAlt streamer = streamersAlt.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                        + (String) propertyMap.get("MULTICASTPORT"));
+                                if (streamer != null) {
+                                    streamer.Stop();
+                                    streamersAlt.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                            + (String) propertyMap.get("MULTICASTPORT"));
+                                }
                             }
                         }
                     }
@@ -80,7 +117,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                 case "RECORD":
                     if (Util.DetectIfServer()) {
                         if (data.getAction().equals("START")) {
-                            if (streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                            if (recorders.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT")) != null) {
                                 return; // Ignore if recording already is running
                             }
@@ -139,18 +176,29 @@ public class KafkaActionHandler implements KafkaActionListener {
                     }
                     if (propertyMap.get("FROM").equals(opconID)) { // Need to take action, I am the referenced client
                         if (data.getAction().equals("START")) {
-                            if (streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
-                                    + (String) propertyMap.get("MULTICASTPORT")) != null) {
-                                return; // Ignore if stream already is running
-                            }
                             Runnable runnable = () -> { // FFMpeg Thread
                                 try {
-
+                                    if(config.get("ssmethod").equals("gstreamer")) {
+                                        if (streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                                + (String) propertyMap.get("MULTICASTPORT")) != null) {
+                                            return; // Ignore if stream already is running
+                                        }
                                     ScreenStreamer streamer = new ScreenStreamer((String) propertyMap.get("MULTICASTIP"),
-                                            (String) propertyMap.get("MULTICASTPORT"), false);
+                                          (String) propertyMap.get("MULTICASTPORT"), Boolean.parseBoolean(config.get("ssvaapi")));
                                     streamers.put((String) propertyMap.get("MULTICASTIP") + ":"
-                                            + (String) propertyMap.get("MULTICASTPORT"), streamer);
-                                    streamer.Start();
+                                     + (String) propertyMap.get("MULTICASTPORT"), streamer);
+                                          streamer.Start();
+                                    }else if(config.get("ssmethod").equals("ffmpeg")) {
+                                        if (streamersAlt.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                                + (String) propertyMap.get("MULTICASTPORT")) != null) {
+                                            return; // Ignore if stream already is running
+                                        }
+                                        ScreenStreamerAlt streamer = new ScreenStreamerAlt((String) propertyMap.get("MULTICASTIP"),
+                                                (String) propertyMap.get("MULTICASTPORT"), Boolean.parseBoolean(config.get("ssvaapi")), config.get("ssinptstr"));
+                                          streamersAlt.put((String) propertyMap.get("MULTICASTIP") + ":"
+                                           + (String) propertyMap.get("MULTICASTPORT"), streamer);
+                                          streamer.Start();
+                                    }
                                 } catch (Exception err) {
                                     err.printStackTrace();
                                 }
@@ -159,13 +207,23 @@ public class KafkaActionHandler implements KafkaActionListener {
                             t.start();
                         } else if (data.getAction().equals("STOP")) {
                             Runnable runnable = () -> {
-                            	ScreenStreamer streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
-                                        + (String) propertyMap.get("MULTICASTPORT"));
-                                if (streamer != null) {
-                                    streamer.Stop();
-                                    streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                if(config.get("ssmethod").equals("gstreamer")) {
+                                	ScreenStreamer streamer = streamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                             + (String) propertyMap.get("MULTICASTPORT"));
-                                }
+                                    if (streamer != null) {
+                                        streamer.Stop();
+                                        streamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                                + (String) propertyMap.get("MULTICASTPORT"));
+                                    }
+                                    }else if(config.get("ssmethod").equals("ffmpeg")) {
+                                    	ScreenStreamerAlt streamer = streamersAlt.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                                + (String) propertyMap.get("MULTICASTPORT"));
+                                        if (streamer != null) {
+                                            streamer.Stop();
+                                            streamersAlt.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                                    + (String) propertyMap.get("MULTICASTPORT"));
+                                        }
+                                    }
                             };
                             Thread t = new Thread(runnable);
                             t.start();
@@ -177,6 +235,7 @@ public class KafkaActionHandler implements KafkaActionListener {
                 case "REPLAY":
                     if (Util.DetectIfServer()) {
                         if (data.getAction().equals("START")) {
+                            if(config.get("vsmethod").equals("gstreamer")) {
                             if (vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT")) != null) {
                                 return; // Ignore if replay already is running
@@ -186,7 +245,19 @@ public class KafkaActionHandler implements KafkaActionListener {
                             vstreamers.put((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"), vstreamer);
                             vstreamer.Start();
+                            }else if(config.get("vsmethod").equals("ffmpeg")) {
+                                if (vstreamersAlt.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                        + (String) propertyMap.get("MULTICASTPORT")) != null) {
+                                    return; // Ignore if replay already is running
+                                }
+                                VideoStreamerAlt vstreamer = new VideoStreamerAlt("/var/tmp/" + (String) propertyMap.get("FILE"),
+                                        (String) propertyMap.get("MULTICASTIP"), (String) propertyMap.get("MULTICASTPORT"));
+                                vstreamersAlt.put((String) propertyMap.get("MULTICASTIP") + ":"
+                                        + (String) propertyMap.get("MULTICASTPORT"), vstreamer);
+                                vstreamer.Start();
+                            }
                         } else if (data.getAction().equals("STOP")) {
+                            if(config.get("vsmethod").equals("gstreamer")) {
                             VideoStreamer vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
                             if (vstreamer != null) {
@@ -194,7 +265,16 @@ public class KafkaActionHandler implements KafkaActionListener {
                                 vstreamers.remove((String) propertyMap.get("MULTICASTIP") + ":"
                                         + (String) propertyMap.get("MULTICASTPORT"));
                             }
-                        } else if (data.getAction().equals("SEEK")) {
+                            }else if(config.get("vsmethod").equals("ffmpeg")) {
+                                VideoStreamerAlt vstreamer = vstreamersAlt.get((String) propertyMap.get("MULTICASTIP") + ":"
+                                        + (String) propertyMap.get("MULTICASTPORT"));
+                                if (vstreamer != null) {
+                                    vstreamer.Stop();
+                                    vstreamersAlt.remove((String) propertyMap.get("MULTICASTIP") + ":"
+                                            + (String) propertyMap.get("MULTICASTPORT"));
+                                }
+                            }
+                        } else if (data.getAction().equals("SEEK")) { // This is non finished code beware! only use with gstreamer.
                             VideoStreamer vstreamer = vstreamers.get((String) propertyMap.get("MULTICASTIP") + ":"
                                     + (String) propertyMap.get("MULTICASTPORT"));
                             if (vstreamer != null) {

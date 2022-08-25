@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+	<screenstreamer>
+		<method>gstreamer</method>
+		<inputstring>:0.0</inputstring> <!-- if gstreamer is used input string is ignored -->
+		<vaapi>false</vaapi>
+	</screenstreamer>
+
+	<videostreamer>
+		<method>ffmpeg</method>
+	</videostreamer>
+</Config>

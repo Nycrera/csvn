@@ -25,7 +25,8 @@ public class VideoStreamerAlt {
 	long pausedTimestamp = 0;
 	boolean running = false;
 	boolean paused = false;
-
+	Thread t;
+	
 	VideoStreamerAlt(String filename, String clientip, String clientport) throws java.lang.Exception {
 		grabber = new FFmpegFrameGrabber(filename);
 		grabber.start();
@@ -112,7 +113,7 @@ public class VideoStreamerAlt {
 			}
 		};
 
-		Thread t = new Thread(runnable);
+		t = new Thread(runnable);
 		t.start();
 	}
 
@@ -174,6 +175,9 @@ public class VideoStreamerAlt {
 			for (StreamClient client : clientList) {
 				client.recorder.stop();
 				client.recorder.close();
+			}
+			if(t.isAlive()) {
+				t.stop(); // Unsafe stop, last resort, shouldn't even need to execute anyway.
 			}
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
