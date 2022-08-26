@@ -144,7 +144,9 @@ public class KafkaActionHandler implements KafkaActionListener {
                             rc.setStartTime(data.getActionDate());
                             rc.setName(String.valueOf(propertyMap.get("NAME")));
                             rc.setStatus(false);
-
+                            
+                            Util.UpdateStatusXml(rc.getSource(), rc.getName() , Long.valueOf(String.valueOf(rc.getStartTime())));
+                            
                             ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1, rc);
                            
                         } else if (data.getAction().equals("STOP")) {
@@ -165,11 +167,13 @@ public class KafkaActionHandler implements KafkaActionListener {
                             t.start();
 
                             Record rc = ServerManager.consoleRecordStatus.get(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1);
-                            System.out.println(rc.getSource());
-
+                            
                             rc.setStartTime(null);
                             rc.setName("");
                             rc.setStatus(true);
+                            
+                            Util.ClearStatusXml(rc.getSource());
+                            
                             ServerManager.consoleRecordStatus.set(Integer.valueOf(String.valueOf(propertyMap.get("FROM")).replaceAll("OPCON-", "")) - 1, rc);
 
                         }

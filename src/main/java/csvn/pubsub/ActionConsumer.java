@@ -14,6 +14,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.Random;
+
 import core.kafka.communication.types.Action;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -61,7 +63,8 @@ public class ActionConsumer {
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ObjectDeserializer.class);
         // consumerProps.put(CustomDeserializer.VALUE_CLASS_NAME_CONFIG, OrderInvoice.class);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "Sample-grp_id");
+        Random generator = new Random();
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, String.valueOf(generator.nextInt(10000))+"havelsan");
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         return consumerProps;
     }

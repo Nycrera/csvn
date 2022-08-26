@@ -15,6 +15,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.Random;
+
 import core.kafka.communication.types.Status;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -39,7 +41,7 @@ public class StatusConsumer {
             try {
                 ConsumerRecords<String, Status> orderRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
                 orderRecords.forEach(record -> {
-                    System.out.println(record.value().toString());
+                    //System.out.println(record.value().toString());
                     KafkaListener.KafkaAction(record.value());
 
                 });
@@ -61,7 +63,8 @@ public class StatusConsumer {
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ObjectDeserializer.class);
         // consumerProps.put(CustomDeserializer.VALUE_CLASS_NAME_CONFIG, OrderInvoice.class);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "havelsan_grosusuup");
+        Random generator = new Random();
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, String.valueOf(generator.nextInt(10000))+"havelsan");
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         return consumerProps;
     }

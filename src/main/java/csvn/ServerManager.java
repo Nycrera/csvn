@@ -21,6 +21,7 @@ public class ServerManager {
     public static ArrayList<Boolean> consoleLiveStatus = Util.liveStatusCreator();
     public static ArrayList<Record> consoleRecordStatus = Util.recordStatusCreator();
     public static void main(String[] args) {
+    	
         ScheduledThreadPoolExecutor publisherThread = new ScheduledThreadPoolExecutor(1);
         publisherThread.scheduleAtFixedRate(new Runnable() {
             @Override

@@ -176,14 +176,14 @@ public class csvnUI extends JFrame {
         uppanel.setBackground(Color.DARK_GRAY);
 
         JToggleButton maintglbtn = new JToggleButton("");
-        Image imgmoon = new ImageIcon(this.getClass().getResource("/moon.png")).getImage();
-        Image imgsun = new ImageIcon(this.getClass().getResource("/sun.png")).getImage();
+        Image imgmoon = new ImageIcon(this.getClass().getResource("/core/themes/moon.png")).getImage();
+        Image imgsun = new ImageIcon(this.getClass().getResource("/core/themes/sun.png")).getImage();
         maintglbtn.setIcon(new ImageIcon(imgsun));
         maintglbtn.setBounds(751, 3, 73, 32);
         uppanel.add(maintglbtn);
 
         JButton mainbtn10 = new JButton("");
-        Image imgsettings = new ImageIcon(this.getClass().getResource("/settings.png")).getImage();
+        Image imgsettings = new ImageIcon(this.getClass().getResource("/core/themes/settings.png")).getImage();
         mainbtn10.setIcon(new ImageIcon(imgsettings));
         mainbtn10.setBounds(751, 3, 73, 32);
         uppanel.add(mainbtn10);
@@ -208,7 +208,7 @@ public class csvnUI extends JFrame {
         uppanel.add(mainbtn9);
 
         JButton mainbtn8 = new JButton("");
-        Image imghome = new ImageIcon(this.getClass().getResource("/home.png")).getImage();
+        Image imghome = new ImageIcon(this.getClass().getResource("/core/themes/home.png")).getImage();
         mainbtn8.setIcon(new ImageIcon(imghome));
         mainbtn8.setBounds(10, 3, 73, 32);
         uppanel.add(mainbtn8);
@@ -266,7 +266,7 @@ public class csvnUI extends JFrame {
         subrcrdpanel1.setBounds(10, 320, 825, 81);
         rcrdpanel.add(subrcrdpanel1);
 
-        JLabel rcrdlbl1 = new JLabel("?? time");
+        JLabel rcrdlbl1 = new JLabel("Period");
         rcrdlbl1.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         rcrdlbl1.setForeground(Color.WHITE);
         rcrdlbl1.setHorizontalAlignment(SwingConstants.CENTER);
@@ -688,9 +688,9 @@ public class csvnUI extends JFrame {
                 for (int l = modelrply.getRowCount() - 1; l >= 0; l--) {
                     modelrply.removeRow(l);
                 }
-
-                for (int k = 0; k < filelist2.length; k++) {
-                    modelrply.addRow(new Object[]{filelist2[k].getName()});
+                List<String> liste = statusModel.getReplayFiles();
+                for (int k = 0; k < liste.size(); k++) {
+                    modelrply.addRow(new Object[]{liste.get(k)});
                 }
 
             }
@@ -732,7 +732,11 @@ public class csvnUI extends JFrame {
                     Map<String, String> properties = new HashMap<String, String>();
                     properties.put("FROM", dstcombo1.getSelectedItem().toString());
                     properties.put("TO", dstcombo2.getSelectedItem().toString());
-                    properties.put("MULTICASTIP", "127.0.0.1");
+                    try {
+						properties.put("MULTICASTIP", Util.GetIPFromOpcon(dstcombo2.getSelectedItem().toString()));
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
                     properties.put("MULTICASTPORT", "1234");
                     try {
                         ActionProducer.Send("STREAM", "START", properties);
@@ -817,7 +821,11 @@ public class csvnUI extends JFrame {
 
                 properties.put("FROM", dsttable.getValueAt(rownum, 0).toString());
                 properties.put("TO", dsttable.getValueAt(rownum, 2).toString());
-                properties.put("MULTICASTIP", "127.0.0.1");
+                try {
+					properties.put("MULTICASTIP", Util.GetIPFromOpcon(dsttable.getValueAt(rownum, 2).toString()));
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
                 properties.put("MULTICASTPORT", "1234");
                 try {
                     ActionProducer.Send("STREAM", "STOP", properties);
@@ -922,7 +930,7 @@ public class csvnUI extends JFrame {
                 int rownum = rcrdtable.getSelectedRow();
 
                 properties.put("FROM", rcrdtable.getValueAt(rownum, 0).toString());
-                properties.put("MULTICASTIP", "127.0.0.1");
+                properties.put("MULTICASTIP", Util.getServerIP());
                 properties.put("MULTICASTPORT", "1234");
                 properties.put("PERIOD", rcrdcombo1.getSelectedItem().toString());
                 properties.put("PRIORITY", "NORMAL");
@@ -942,7 +950,7 @@ public class csvnUI extends JFrame {
                 int rownum = rcrdtable.getSelectedRow();
 
                 properties.put("FROM", rcrdtable.getValueAt(rownum, 0).toString());
-                properties.put("MULTICASTIP", "127.0.0.1");
+                properties.put("MULTICASTIP", Util.getServerIP());
                 properties.put("MULTICASTPORT", "1234");
                 //properties.put("PERIOD",rcrdcombo1.getSelectedItem().toString());
                 properties.put("PRIORITY", "NORMAL");
@@ -963,7 +971,11 @@ public class csvnUI extends JFrame {
                 Map<String, String> properties = new HashMap<String, String>();
                 properties.put("FILE", vidFileName);
                 properties.put("TO", destination);
-                properties.put("MULTICASTIP", "127.0.0.1");
+                try {
+					properties.put("MULTICASTIP", Util.GetIPFromOpcon(destination));
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
                 properties.put("MULTICASTPORT", "1234");
 
                 try {
@@ -981,7 +993,11 @@ public class csvnUI extends JFrame {
                 Map<String, String> properties = new HashMap<String, String>();
                 properties.put("FILE", vidFileName);
                 properties.put("TO", destination);
-                properties.put("MULTICASTIP", "127.0.0.1");
+                try {
+					properties.put("MULTICASTIP", Util.GetIPFromOpcon(destination));
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
                 properties.put("MULTICASTPORT", "1234");
                 try {
                     ActionProducer.Send("REPLAY", "STOP", properties);
